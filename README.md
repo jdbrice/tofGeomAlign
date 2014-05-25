@@ -2,7 +2,7 @@ root
 ====
 
 
-### boiler
+## boiler
 This project is the starting place for root-based applications. It contains:
 
 ####app
@@ -103,7 +103,20 @@ Usage in code:
     cout << "[CONFIG]" << setw(20) << " maxFiles "        << config.getAsInt( "maxFiles" ) << endl;
 
     
-	// get a parameter returned as an int type
+	// get a parameter returned as a double type
     cout << "[CONFIG]" << setw(20) << " removeOffset "        << config.getAsDouble( "removeOffset" ) << endl;
 
 ```
+
+
+
+## ntupleCleaner
+This is a tool for cleaning ntuples when a job has returned many good files mixed with many files that did not process and therefore do not contain the desired tree.
+
+This tool scans all ntuple files in a directory and removes the ones that do not contain the given tree.
+
+Usage:
+
+ntupleCleaner treeName dataDirectory maxFilesToScan
+
+Warning: Be careful using this, improper use could delete good data.
