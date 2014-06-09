@@ -15,7 +15,7 @@ ROOTGLIBS     	= $(shell root-config --glibs)
 includes		= -I../include -I. -I$(ROOTSYS)/include -I$(ROOTDEV)/include 
 libraries 			= 	$(ROOTLIBS) -lGui -lHtml -lGuiHtml $(CERNLIBS) $(SYSLIBS) \
 
-cxx 		= g++
+cxx 		= g++ -std=c++0x
 flags 		= -Wall -g $(ROOTCFLAGS) $(includes) -Wno-write-strings -m32 -fno-inline
 compile 	= $(cxx) $(flags) -c 
 ldFlags  	= -m32 -g
