@@ -1,13 +1,20 @@
 <config>
 
+	<!-- perform the geometry alignment -->
 	<jobType>calibrate</jobType>
+
+	<!-- names for root, report, data file etc. -->
 	<baseName></baseName>
 	<rootOutput>qa</rootOutput>
 	<reportOutput>qa.pdf</reportOutput>
+	<geometryOutput>geometryAlignment.dat</geometryOutput>
 	
+	<!-- The directory containing the picoDsts -->
 	<dataDir>/star/institutions/rice/jdb/run13/pp510/tofCalibrationRun13/MuDstOutput/idealGeometry/output/</dataDir>
+	<!-- number of files to process -->
 	<maxFiles> 200 </maxFiles>
 
+	<!-- cuts to apply -->
 	<ptCut>0.5</ptCut>
 	<vzCut>30.0</vzCut>
 	<minHitsFit>25</minHitsFit>
