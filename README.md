@@ -32,46 +32,47 @@ All configuration tags are case insensitive and must follow xml tag format
 The default value is given for optional tags.
 
 ###Jobtype
-default : calibration
-####calibrate
-performs a geometry alignment job
-####plot
-plots the histograms showing the yLocal and zLocal hit distributions but does not do a full calibration
+* Default : calibration
+* ####calibrate
+* performs a geometry alignment job
+* ####plot
+* plots the histograms showing the yLocal and zLocal hit distributions but does not do a full calibration
 
 ###baseName
-The name to be prepended to all output files for easier record keeping. For instance give a basename of "run14AuAu14.6GeV" to make all root, PDF, etc appear as run14AuAu14.6GeV.{root, pdf, etc. } 
+Default : ""
+* The name to be prepended to all output files for easier record keeping. For instance give a basename of "run14AuAu14.6GeV" to make all root, PDF, etc appear as run14AuAu14.6GeV.{root, pdf, etc. } 
 
 ###rootOutput
-default : "qa.root"
-The name specific to the root output file name. The full name will be baseName+rootOutput. The '.root' suffix will be added if needed.
+* Default : "qa.root"
+* The name specific to the root output file name. The full name will be baseName+rootOutput. The '.root' suffix will be added if needed.
 
 ###reportOutput
-default : "qa.pdf"
-The name specific to the pdf report output file name. The full name will be baseName+reportOutput. The '.pdf' suffix should be specified.
+* Default : "qa.pdf"
+* The name specific to the pdf report output file name. The full name will be baseName+reportOutput. The '.pdf' suffix should be specified.
 
 ###geometryOutput
-default : "geometryAlignment.dat"
-The name specific to the data output file. The full name will be baseName+geometryOutput. The '.dat' suffix should be specified.
+* Default : "geometryAlignment.dat"
+* The name specific to the data output file. The full name will be baseName+geometryOutput. The '.dat' suffix should be specified.
 
 ###dataDir
-REQUIRED
-The full path to the directory containing the TOF calibration picoDsts
+* REQUIRED
+* The full path to the directory containing the TOF calibration picoDsts
 
 ###maxFiles
-default : 10000
-The maximum number of files to load from the <dataDir> directory for processing
+* Default : 10000
+* The maximum number of files to load from the <dataDir> directory for processing
 
 ###ptCut
-default : 0.5 [GeV]
-The pt cut applied to tracks matched to the tof hits
+* Default : 0.5 [GeV]
+* The pt cut applied to tracks matched to the tof hits
 
 ###vzCut
-default : 30.0 [cm]
-The cut applied to the TPC zVertex. TRacks must have a zVertex less than the cut value.
+* Default : 30.0 [cm]
+* The cut applied to the TPC zVertex. TRacks must have a zVertex less than the cut value.
 
 ###minHitsFit
-default : 25
-The minimum number of hits in the track fit. Tracks with fewer hits used for the fit will not be used for the calibration.
+* Default : 25
+* The minimum number of hits in the track fit. Tracks with fewer hits used for the fit will not be used for the calibration.
 
 
 ## Sample Configuration
