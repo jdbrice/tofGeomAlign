@@ -6,7 +6,6 @@
 #include "histoBook.h"
 #include "constants.h"
 #include "TOFrPicoDst.h"
-#include "splineMaker.h"
 #include <vector>
 
 // clock_t, clock, CLOCKS_PER_SEC 
@@ -23,7 +22,7 @@ class calib{
 private:
 
 	// the canvas used to draw report hidtos
-	TCanvas* can;
+	TCanvas* canvas;
 
 	// the main chain object
 	TChain * _chain;
@@ -39,7 +38,22 @@ private:
 
 	// config file
 	xmlConfig config;
+
+	int nSections;
+	std::vector<double> moduleStart;
+
+	// from the y fit
+	std::vector<double> yPos, yError;
 	
+	// from the x fit
+	std::vector<double> xPos, xError;
+	
+	// from the z fit
+	std::vector<double> zPos[ constants::nTrays ], zError[ constants::nTrays ];
+	std::vector<double> angle0zOff, angle0zError;
+	std::vector<double> angle0FitOff, angle0FitError;
+
+	double moduleSpaceMap[ constants::nSections ];
 
 public:
 
@@ -48,6 +62,10 @@ public:
 
 	// destructor
 	~calib();
+
+	void localPosition();
+	void fitY();
+	void fitXAndZ();
 
 	// finish the calibration by conducting fits etc.
 	void savePage();
@@ -59,6 +77,10 @@ protected:
 	*/ 
 	void startTimer( ) { startTime = clock(); }
 	double elapsed( ) { return ( (clock() - startTime) / (double)CLOCKS_PER_SEC ); }
+
+
+	static Double_t fitFunction( Double_t *x, Double_t *par );
+	static Double_t fitAngle( Double_t *x, Double_t *par );
 };
 
 

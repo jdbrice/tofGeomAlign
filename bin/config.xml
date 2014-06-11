@@ -1,0 +1,15 @@
+<config>
+
+	<jobType>calibrate</jobType>
+	<baseName></baseName>
+	<rootOutput>qa</rootOutput>
+	<reportOutput>qa.pdf</reportOutput>
+	
+	<dataDir>/star/institutions/rice/jdb/run13/pp510/tofCalibrationRun13/MuDstOutput/idealGeometry/output/</dataDir>
+	<maxFiles> 200 </maxFiles>
+
+	<ptCut>0.5</ptCut>
+	<vzCut>30.0</vzCut>
+	<minHitsFit>25</minHitsFit>
+
+</config>

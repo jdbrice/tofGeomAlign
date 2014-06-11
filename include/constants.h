@@ -3,13 +3,15 @@
 
 // constants should go in here
 
-class Constants{
+class constants{
 
 private:
 
 public:
 
-	static const int nChannels = 38; 
+	static const int nSections = 7;
+	static const int nTrays = 120;
+
 
 
 };
