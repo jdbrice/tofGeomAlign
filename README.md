@@ -33,9 +33,9 @@ The default value is given for optional tags.
 
 ###Jobtype
 * Default : calibration
-1. **calibrate**
+  1. **calibrate**
 performs a geometry alignment job
-2. **plot**
+  2. **plot**
 plots the histograms showing the yLocal and zLocal hit distributions but does not do a full calibration
 
 ###baseName
