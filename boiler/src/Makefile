@@ -6,6 +6,9 @@ source = .cpp
 # object files to make
 objects = app.o histoBook.o chainLoader.o xmlConfig.o
 
+sources = $(wildcard *.cpp)
+headers = $(wildcard ../include/*.h)
+
 # ROOT libs and includes
 ROOTCFLAGS    	= $(shell root-config --cflags)
 ROOTLIBS      	= $(shell root-config --libs)
@@ -37,3 +40,11 @@ clean:
 full:
 	clean
 	$(project)
+
+#doc:
+#	@echo "Generating documentation..." 	\					
+#	cldoc generate $(CXXFLAGS) --			\
+#		--report 							\
+#		--merge docs 						\
+#		--output html 						\
+#		$(sources) $(headers)
