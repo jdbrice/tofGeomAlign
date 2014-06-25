@@ -4,7 +4,7 @@ project = app
 # source suffix
 source = .cpp 
 # object files to make
-objects = app.o histoBook.o chainLoader.o xmlConfig.o
+objects = app.o histoBook.o chainLoader.o 
 
 sources = $(wildcard *.cpp)
 headers = $(wildcard ../include/*.h)

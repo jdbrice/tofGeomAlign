@@ -3,6 +3,8 @@
 #include "allroot.h"
 #include "constants.h"
 
+#include "xmlConfig.h"
+
 /* 
 *
 *	GUI Application
@@ -28,6 +30,11 @@ int main(int argc, char* argv[]) {
 int main( int argc, char* argv[] ) {
 
 	cout << "const: " << Constants::nChannels << endl;
+  if ( argc >= 2 ){
+    xmlConfig config( argv[ 1 ] );
+    config.report();
+  }
+
 
 	return 0;
 }
