@@ -1,11 +1,15 @@
 <config>
 
+	<input>
+		<dataDir maxFiles="1" >/star/institutions</dataDir>
+		<maxFiles>1</maxFiles>
+	</input>
 	<array>
-		<dates>
-			<v>                                  12-12-02</v>
-			<v>13-12-01</v>
-			<v>13-12-03</v>
-			<v>13-12-04</v>
+		<dates index="vv">
+			<vv>                                  12-12-02</vv>
+			<vv>13-12-01</vv>
+			<vv>13-12-03</vv>
+			<vv>13-12-04</vv>
 		</dates>
 		
 		<tries>

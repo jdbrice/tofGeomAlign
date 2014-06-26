@@ -127,12 +127,30 @@ public:
 		stringstream sstr; 
 
 	  	vector<string> ntf = split( nName, '.' );
+	  	vector<string> attr = split( nName, ':' );
+	  	if ( attr.size() >= 2 ){
+			ntf[ ntf.size() - 1 ] = ntf[ ntf.size() - 1 ].substr( 0, ntf[ ntf.size() - 1 ].length() - (attr[ 1].length() + 1) );
+		}
+	  	cout << "attr : " << attr.size() << endl;
 
 		xml_node<> *node = doc.first_node();
 		for ( uint i = 0; i < ntf.size(); i++ ){
 			if ( node ){
 				node = node->first_node( ntf[ i ].c_str() );
 				if ( node && ntf.size() - 1 == i ){
+					
+
+					if ( attr.size() >= 2 ){
+						if ( node->first_attribute( attr[ 1 ].c_str() ) ){
+							sstr << node->first_attribute( attr[ 1 ].c_str() )->value();
+							if ( trimW )
+								return trim( sstr.str() );
+							else
+								return sstr.str();							
+						}
+							
+					}
+
 					sstr << node->value();
 					if ( trimW )
 						return trim( sstr.str() );
@@ -171,14 +189,29 @@ public:
 
 		vector<string> ntf = split( nName, '.' );
 
+		string index = "v";
+
 		xml_node<> *node = doc.first_node();
 		for ( uint i = 0; i < ntf.size(); i++ ){
 			if ( node ){
 				node = node->first_node( ntf[ i ].c_str() );
+				if ( node->first_attribute( "index" ) ){
+					//cout << " attrib : " << node->first_attribute( "index" )->value() << endl;
+					sstr.str("");
+					sstr << node->first_attribute( "index" )->value();
+					index = sstr.str();
+				}
 				if ( node && ntf.size() - 1 == i ){
 					for (xml_node<> *child = node->first_node(  ); child; child = child->next_sibling() ){
 					    sstr.str("");
 					    
+					    sstr << child->name();
+
+					    if ( sstr.str() != index )
+					    	continue; 
+
+					    sstr.str("");
+
 					    if ( trimW )
 					    	sstr << trim( child->value() );
 					    else
@@ -205,13 +238,22 @@ public:
 
 	bool nodeExists( char* nName ){
 		vector<string> ntf = split( nName, '.' );
+		vector<string> attr = split( nName, ':' );
+		if ( attr.size() >= 2 ){
+			ntf[ ntf.size() - 1 ] = ntf[ ntf.size() - 1 ].substr( 0, ntf[ ntf.size() - 1 ].length() - (attr[ 1].length() + 1) );
+		}
 
 		xml_node<> *node = doc.first_node();
 		for ( uint i = 0; i < ntf.size(); i++ ){
 			if ( node ){
 				node = node->first_node( ntf[ i ].c_str() );
-				if ( node && ntf.size() - 1 == i )
-					return true;
+				if ( attr.size() <= 1 ){
+					if ( node && ntf.size() - 1 == i )
+						return true;
+				} else {
+					if ( node && ntf.size() - 1 == i && node->first_attribute( (char*)attr[ 1 ].c_str() ) ) 
+						return true;
+				}
 			} else
 				return false;
 		}
@@ -220,7 +262,9 @@ public:
 	}
 
 	bool isVector( char* nName ){
+
 		if ( nodeExists( nName )){
+
 			std::vector<string> v = getStringVector( nName );
 			if ( v.size() >= 1 && v[ 0 ] != getString( nName ) ){
 				return true;
@@ -234,6 +278,7 @@ public:
 	// report
 	void report( xml_node<> * bn = NULL, string cp = "") {
 		
+
 		string np = cp;
 		stringstream sstr;
 		stringstream n;
@@ -253,6 +298,8 @@ public:
 				sstr << cp << node->name();
 			np = sstr.str();
 		}
+
+		//cout << "REPORT : " << np << " " << isVector( (char*)np.c_str() ) << endl;
 
 
 		if ( node->first_node(  ) && !isVector( (char*)cp.c_str() )){
