@@ -131,7 +131,6 @@ public:
 	  	if ( attr.size() >= 2 ){
 			ntf[ ntf.size() - 1 ] = ntf[ ntf.size() - 1 ].substr( 0, ntf[ ntf.size() - 1 ].length() - (attr[ 1].length() + 1) );
 		}
-	  	cout << "attr : " << attr.size() << endl;
 
 		xml_node<> *node = doc.first_node();
 		for ( uint i = 0; i < ntf.size(); i++ ){
