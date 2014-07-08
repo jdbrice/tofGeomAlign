@@ -4,7 +4,7 @@ project = align
 # source suffix
 source = .cpp 
 # object files to make
-objects = align.o histoBook.o chainLoader.o xmlConfig.o calib.o utils.o TOFrPicoDst.o
+objects = align.o histoBook.o chainLoader.o xmlConfig.o calib.o utils.o TOFrPicoDst.o reporter.o
 
 # ROOT libs and includes
 ROOTCFLAGS    	= $(shell root-config --cflags)

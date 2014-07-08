@@ -15,14 +15,15 @@
 #include "unistd.h"
 #include "xmlConfig.h"
 #include "utils.h"
-
+#include "reporter.h"
 
 class calib{
 
 private:
 
-	// the canvas used to draw report hidtos
-	TCanvas* canvas;
+	// reporters
+	reporter* reportX;
+	reporter* reportY;
 
 	// the main chain object
 	TChain * _chain;
