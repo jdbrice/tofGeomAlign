@@ -5,7 +5,7 @@
 #include "TObject.h"
 
 // constructor sets the name of the file for saving
-histoBook::histoBook( string name, string input ){
+histoBook::histoBook( string name, string input, string inDir ){
 
 	if (name.find(  ".root") != std::string::npos){
 		filename = name;	
@@ -30,8 +30,12 @@ histoBook::histoBook( string name, string input ){
 	// if an input was given merge it into the live record
 	if ( input.length() >= 5 ){
 		TFile * fin = new TFile( input.c_str() );
-		loadRootDir( fin, "" );
+		cd ( inDir );
+		fin->cd( inDir.c_str() );
+		loadRootDir( gDirectory, inDir );
 	}
+
+
 
 }
 // destructor
@@ -47,13 +51,16 @@ void histoBook::save() {
 	file->Write();
 }
 
-void histoBook::loadRootDir( TDirectoryFile* tDir, string path ){
+void histoBook::loadRootDir( TDirectory* tDir, string path ){
+
+	//cout << "histoBook.loadRootDir] Path : " << path << endl;
 
 	TList* list;
 
 	if ( tDir ){
 		list = tDir->GetListOfKeys();  
 	} else {
+		cout << "[histoBook.loadRootDir] Bad Directory Given " << endl;
 		return;
 	}
 
@@ -67,7 +74,13 @@ void histoBook::loadRootDir( TDirectoryFile* tDir, string path ){
 		
 		if ( 0 == strcmp(obj->IsA()->GetName(),"TDirectoryFile") ){
 			TDirectoryFile* dir = (TDirectoryFile*)obj;
-			string nPath = path + dir->GetName() + "/";
+			
+			string nPath = path + dir->GetName();
+			if ( path == (string) "" )
+				nPath = path + dir->GetName();
+			else 
+				nPath = path + "/" + dir->GetName();
+
 			cd( nPath );
 			loadRootDir( dir, nPath );
 		} else if ( obj ){
@@ -75,6 +88,7 @@ void histoBook::loadRootDir( TDirectoryFile* tDir, string path ){
 				// not a 1d or 2d histogram
 			} else {
 				// add it to the book
+				//cout << "Adding : " << obj->GetName() << endl;
 				add( obj->GetName(), (TH1*)obj->Clone( obj->GetName() ) );
 			}    
 			
@@ -116,7 +130,7 @@ string histoBook::cd( string sdir  ){
 	if ( file->GetDirectory( csdir ) ){
 		file->cd( csdir );
 	} else {
-		//cout << "[histoBook.cd] creating directory " << sdir << endl;
+		cout << "[histoBook.cd] creating directory " << sdir << endl;
 		file->mkdir( csdir );
 		file->cd( csdir );
 	}

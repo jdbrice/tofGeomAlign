@@ -54,7 +54,7 @@ private:
 
 public:
 
-	histoBook( string name, string input = "" );
+	histoBook( string name, string input = "", string inDir = "" );
 	~histoBook();
 
 	
@@ -98,7 +98,7 @@ public:
 private:
 	void globalStyle();
 	histoBook* placeLegend( int alignmentX, int alignmentY, double width = -1, double height = -1 );
-	void loadRootDir( TDirectoryFile*, string path = "" );
+	void loadRootDir( TDirectory*, string path = "" );
 
 
 };
