@@ -1,9 +1,11 @@
 
 
 #include "histoBook.h"
+#include "TKey.h"
+#include "TObject.h"
 
 // constructor sets the name of the file for saving
-histoBook::histoBook( string name ){
+histoBook::histoBook( string name, string input ){
 
 	if (name.find(  ".root") != std::string::npos){
 		filename = name;	
@@ -25,6 +27,12 @@ histoBook::histoBook( string name ){
 
 	globalStyle();
 
+	// if an input was given merge it into the live record
+	if ( input.length() >= 5 ){
+		TFile * fin = new TFile( input.c_str() );
+		loadRootDir( fin, "" );
+	}
+
 }
 // destructor
 histoBook::~histoBook(){
@@ -37,6 +45,42 @@ histoBook::~histoBook(){
 void histoBook::save() {
 
 	file->Write();
+}
+
+void histoBook::loadRootDir( TDirectoryFile* tDir, string path ){
+
+	TList* list;
+
+	if ( tDir ){
+		list = tDir->GetListOfKeys();  
+	} else {
+		return;
+	}
+
+	TIter next(list);  
+	TKey* key;  
+	TObject* obj;   
+	
+	while ( key = (TKey*)next() ) {    
+		
+		obj = key->ReadObj() ;    
+		
+		if ( 0 == strcmp(obj->IsA()->GetName(),"TDirectoryFile") ){
+			TDirectoryFile* dir = (TDirectoryFile*)obj;
+			string nPath = path + dir->GetName() + "/";
+			cd( nPath );
+			loadRootDir( dir, nPath );
+		} else if ( obj ){
+			if (    (strcmp(obj->IsA()->GetName(),"TProfile")!=0) && (!obj->InheritsFrom("TH2") && (!obj->InheritsFrom("TH1"))) ) {      
+				// not a 1d or 2d histogram
+			} else {
+				// add it to the book
+				add( obj->GetName(), (TH1*)obj->Clone( obj->GetName() ) );
+			}    
+			
+		}
+	}	
+
 }
 
 
@@ -62,7 +106,7 @@ void histoBook::add( string name, TH1* h ){
 *
 * TODO:: add support for full subdirectory trees
 */
-string histoBook::cd( string sdir = "/" ){
+string histoBook::cd( string sdir  ){
 
 	string old = currentDir;
 
