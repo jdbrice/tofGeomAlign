@@ -93,6 +93,8 @@ public:
 	// for function chaining and rapid styling
 	histoBook* set( string param, string p1, string p2 = "", string p3 = "", string p4 = "" );
 	histoBook* set( string param, double p1, double p2 = -1, double p3 = -1, double p4 = -1 );
+	histoBook* set( xmlConfig* config, string nodePath );
+	histoBook* set( string opt, vector<string> nodePath );
 
 
 
@@ -101,6 +103,25 @@ private:
 	void globalStyle();
 	histoBook* placeLegend( int alignmentX, int alignmentY, double width = -1, double height = -1 );
 	void loadRootDir( TDirectory*, string path = "" );
+
+	string sParam( vector<string> params, int p, string def="" ) {
+		if ( p < params.size() )
+			return params[ p ];
+		else 
+			return def;
+	}
+	char* cParam( vector<string> params, int p, string def="" ) {
+		if ( p < params.size() )
+			return (char*)(params[ p ].c_str());
+		else 
+			return (char*)(def.c_str());
+	}
+	double dParam( vector<string> params, int p, double def=0 ) {
+		if ( p < params.size() )
+			return atof( params[ p ].c_str() );
+		else 
+			return def;
+	}
 
 
 };

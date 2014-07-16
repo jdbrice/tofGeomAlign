@@ -262,6 +262,9 @@ histoBook* histoBook::style( string histName ){
 
 histoBook* histoBook::set( string param, string p1, string p2, string p3, string p4 ){
 	
+
+	set( param, vector<string>({ p1, p2, p3, p4}));
+	/*
 	// force the param name to lowercase
 	transform(param.begin(), param.end(), param.begin(), ::tolower);
 
@@ -282,14 +285,34 @@ histoBook* histoBook::set( string param, string p1, string p2, string p3, string
 	    } else if ( "draw" == param ){
 	    	drawOption = p1;
 	    }
-	}
+	}*/
 
 	return this;
 }
 
 histoBook* histoBook::set( string param, double p1, double p2, double p3, double p4  ){
 
+	vector<string> list;
+	stringstream sstr;
+	sstr.str("");
+	sstr << p1;
+	list.push_back( sstr.str() );
 
+	sstr.str("");
+	sstr << p2;
+	list.push_back( sstr.str() );
+
+	sstr.str("");
+	sstr << p3;
+	list.push_back( sstr.str() );
+
+	sstr.str("");
+	sstr << p4;
+	list.push_back( sstr.str() );
+
+	set( param, list );
+
+/*
 	transform(param.begin(), param.end(), param.begin(), ::tolower);
 
     TH1* h = get( styling );
@@ -360,13 +383,137 @@ histoBook* histoBook::set( string param, double p1, double p2, double p3, double
 	    }
 
     }
+    */
     
-    
-    
-
-
 	return this;
 }
+
+histoBook* histoBook::set( xmlConfig* config, string nodePath ){
+
+	// get the list of attributes and set the style from that
+	vector< pair< string, string > > list = config->getAttributes( nodePath );
+
+	for ( int i = 0; i < list.size(); i++ ){
+
+		vector<string> params = config->split( list[ i ].second, ',' );
+		for ( int p = 0; p < params.size(); p++ ){
+			params[ p ] = config->trim(params[ p ]);
+		}
+		
+
+		set( list[ i ].first, params );
+
+	}
+}
+histoBook* histoBook::set( string opt, vector<string> params ){
+
+	cout  << "Setting : " << opt << endl;
+	for ( int i = 0; i < params.size(); i++ ){
+		cout << params[ i ] << " ";
+	}
+	cout << endl;
+	// force the param name to lowercase
+	transform(opt.begin(), opt.end(), opt.begin(), ::tolower);
+
+    TH1* h = get( styling );
+    if ( h ){
+
+	    if ( "title" == opt ){
+	    	h->SetTitle( cParam(params, 0) );
+	    } else if ( "x" == opt ){
+	    	h->GetXaxis()->SetTitle( cParam(params, 0) );
+	    } else if ( "y" == opt ){
+	    	h->GetYaxis()->SetTitle( cParam(params, 0) );
+	    } else if ( "legend" == opt ){
+	    	legend->AddEntry( h, cParam(params, 0), cParam(params, 1, "lpf") );
+			legend->Draw();
+	    } else if ( "draw" == opt ){
+	    	drawOption = cParam(params, 0);
+	    } else if ( "linecolor" == opt ){
+	    	h->SetLineColor( (int) dParam( params, 0) );
+	    } else if ( "domain" == opt ){
+	    	double min = dParam( params, 0);
+	    	double max = dParam( params, 1);
+		    h->GetXaxis()->SetRangeUser( min, max );
+	    } else if ( "dynamicdomain" == opt ){
+	    	double thresh = dParam( params, 0);
+	    	int min = (int)dParam( params, 1);
+	    	int max = (int)dParam( params, 2);
+	    	int axis = (int)dParam( params, 3);		// 1 = x, 2 = y
+
+	    	if ( 1 != axis && 2 != axis )
+	    		axis = 1;
+	    	
+	    	if ( thresh >= 0) {
+	    		if ( -1 >= min )
+	    			min = h->FindFirstBinAbove( thresh, axis );
+	    		if ( -1 >= max )
+	    			max = h->FindLastBinAbove( thresh, axis );
+	    	}
+	    	
+	    	if ( 1 == axis )
+		  	  h->GetXaxis()->SetRange( min, max );
+		  	else if ( 2 == axis )
+		  		h->GetYaxis()->SetRange( min, max );
+
+	    }  else if ( "range" == opt ){
+
+	    	double min = dParam( params, 0);
+	    	double max = dParam( params, 1);
+	    	
+	    	h->GetYaxis()->SetRangeUser( min, max );
+	    } else if ( "markercolor" == opt ) {
+	    	h->SetMarkerColor( (int)dParam( params, 0) );
+	    } else if ( "markerstyle" == opt ) {
+	    	h->SetMarkerStyle( (int)dParam( params, 0) );
+	    } else if ( "legend" == opt ){
+	    	// p1 - alignmentX
+	    	// p2 - alignmentY
+	    	// p3 - width
+	    	// p4 - height
+
+	    	// make sure option is valid
+	    	double p1 = dParam( params, 0);
+	    	double p2 = dParam( params, 1);
+	    	if ( !(legendAlignment::center == p1 || legendAlignment::left == p1 || legendAlignment::right == p1) )
+	    		p1 = legendAlignment::best;
+	    	if ( !(legendAlignment::center == p2 || legendAlignment::top == p2 || legendAlignment::bottom == p2) )
+	    		p2 = legendAlignment::best;
+	    	placeLegend( p1, p2, dParam( params, 3), dParam( params, 3) );
+	    } else if ( "numberofticks" == opt ){
+	    	// p1 - # of primary divisions
+	    	// p2 - # of secondary divisions
+	    	// p3 - axis : 0 or 1 = x, 2 = y
+	    	double p1 = dParam( params, 0);
+	    	double p2 = dParam( params, 1);
+	    	double p3 = dParam( params, 2);
+
+	    	if ( p2 == -1 )
+	    		p2 = 0;
+
+		    if ( 2 == (int)p3 )
+		    	h->GetYaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
+		    else 
+		    	h->GetXaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
+	    } else if ( "logy" == opt ){
+	    	gPad->SetLogy( (int)dParam( params, 0 ) );
+	    } else if ( "logx" == opt ){
+	    	gPad->SetLogx( (int)dParam( params, 0 ) );
+	    } else if ( "logz" == opt ){
+	    	gPad->SetLogz( (int)dParam( params, 0 ) );
+	    }
+
+
+
+
+	}
+
+	return this;
+
+
+
+}
+
 
 
 histoBook* histoBook::draw(string name, Option_t* opt ){

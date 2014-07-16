@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <iomanip>
+#include <utility>      // std::pair, std::make_pair
 
 
 using namespace std;
@@ -178,6 +179,48 @@ public:
 		}
 
 		cout << "[" << fname <<  "] " << std::left << setw(20) <<  nName  << getString( nName ) << endl;
+
+		vector< pair< string, string > > att = getAttributes( nName );
+		if ( att.size() >= 1 ){
+			cout << "\t" << "< ";
+			for ( int i = 0; i < att.size(); i++ ){
+				cout << att[ i ].first << "='" << att[ i ].second << "' ";
+			}
+			cout << ">" << endl;
+		}
+
+	}
+
+	vector< pair< string, string > > getAttributes( string nName ){
+		vector< pair< string, string > > list;
+
+		vector<string> ntf = split( nName, '.' );
+		vector<string> attr = split( nName, ':' );
+		if ( attr.size() >= 2 ){
+			ntf[ ntf.size() - 1 ] = ntf[ ntf.size() - 1 ].substr( 0, ntf[ ntf.size() - 1 ].length() - (attr[ 1].length() + 1) );
+		}
+
+		xml_node<> *node = doc.first_node();
+		for ( uint i = 0; i < ntf.size(); i++ ){
+			if ( node ){
+				node = node->first_node( ntf[ i ].c_str() );
+				if ( attr.size() <= 1 ){
+					if ( node && ntf.size() - 1 == i ){
+						for(const rapidxml::xml_attribute<>* a = node->first_attribute()
+			                ; a
+			                ; a = a->next_attribute()
+			            ) {
+			               	list.push_back( make_pair( string(a->name() ), string( a->value() ) ) );
+			            }
+
+					}
+				} else {
+					// shouldnt specify attribute to list attributes
+				}
+			}
+			
+		}
+		return list;
 	}
 
 	vector<string> getStringVector( string nName, bool trimW = true ){
