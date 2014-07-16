@@ -165,6 +165,11 @@ public:
 	}
 
 	void display( string nName ){
+
+		if ( getBool( hName + ":hide" ) ){
+			return;
+		}
+
 		// if it is a vector print it that way
 		stringstream sstr;
 		std::vector<string> v = getStringVector( nName );
