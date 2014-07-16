@@ -161,10 +161,7 @@ void histoBook::make( xmlConfig * config, string nodeName ){
 					config->getDouble( nodeName + ":x2", 1 ),
 					config->getInt( nodeName + ":nBinsY", 1 ), config->getDouble( nodeName + ":y1", 0 ),
 					config->getDouble( nodeName + ":y2", 1 ) );
-		
-		} else if ( "1F" == type ){
-			// test comment 12312
-		}
+	
 	}
 
 }
