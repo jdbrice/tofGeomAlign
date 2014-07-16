@@ -50,12 +50,15 @@ private:
 	string drawOption;
 	TLegend * legend;
 
+	// optional config to use for all config related calls
+	xmlConfig * config;
 
 
 
 public:
 
 	histoBook( string name, string input = "", string inDir = "" );
+	histoBook( string name, xmlConfig* config, string input = "", string inDir = "" );
 	~histoBook();
 
 	
@@ -72,6 +75,7 @@ public:
 	void make2D( 	string name, string title, 
 					uint nBinsX, const Double_t* xBins, uint nBinsY, double lowY, double hiY );
 	void make( xmlConfig * config, string nodeName );
+	void make( string nodeName );
 
 	TLegend* getLegend() { return legend; }
 
@@ -94,6 +98,7 @@ public:
 	histoBook* set( string param, string p1, string p2 = "", string p3 = "", string p4 = "" );
 	histoBook* set( string param, double p1, double p2 = -1, double p3 = -1, double p4 = -1 );
 	histoBook* set( xmlConfig* config, string nodePath );
+	histoBook* set( string nodePath );
 	histoBook* set( string opt, vector<string> nodePath );
 
 

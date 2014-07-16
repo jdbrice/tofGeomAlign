@@ -4,7 +4,13 @@
 #include "TKey.h"
 #include "TObject.h"
 
-// constructor sets the name of the file for saving
+/**
+ * Creates a histobook and allows the root filename to be set. optionally read from an existing root 
+ * file and include everything into the working space
+ * @param name  root filename
+ * @param input input filename
+ * @param inDir input starting directory
+ */
 histoBook::histoBook( string name, string input, string inDir ){
 
 	if (name.find(  ".root") != std::string::npos){
@@ -34,10 +40,45 @@ histoBook::histoBook( string name, string input, string inDir ){
 		fin->cd( inDir.c_str() );
 		loadRootDir( gDirectory, inDir );
 	}
-
-
-
 }
+
+/**
+ * Constructor that allows th input of a config file
+ * @param name name of file to use for saving root data
+ * @param con  The config file to use for all config relates calls
+ */
+histoBook::histoBook( string name, xmlConfig * con, string input, string inDir ){
+
+	if (name.find(  ".root") != std::string::npos){
+		filename = name;	
+	} else
+		filename = name + ".root";
+
+	currentDir = "/";
+
+	file = new TFile( filename.c_str(), "recreate" );
+	file->cd();
+
+	// make the legend and draw it once to apply styles etc. 
+	// for some reason needed to make styling work on the first draw
+	legend = new TLegend( 0.65, 0.65, 0.9, 0.9);
+	legend->SetFillColor( kWhite );
+	legend->Draw();
+	legend->Clear();
+
+	globalStyle();
+
+	config = con;
+
+	// if an input was given merge it into the live record
+	if ( input.length() >= 5 ){
+		TFile * fin = new TFile( input.c_str() );
+		cd ( inDir );
+		fin->cd( inDir.c_str() );
+		loadRootDir( gDirectory, inDir );
+	}
+}
+
 // destructor
 histoBook::~histoBook(){
 
@@ -140,6 +181,10 @@ string histoBook::cd( string sdir  ){
 	return old;
 }
 
+void histoBook::make( string nodeName ){
+	if ( config )
+		make( config, nodeName );
+}
 void histoBook::make( xmlConfig * config, string nodeName ){
 
 	if ( config && config->nodeExists( nodeName ) ){
@@ -423,6 +468,11 @@ histoBook* histoBook::set( string opt, vector<string> params ){
 
 
 
+}
+histoBook * histoBook::set( string nodeName ){
+	if ( config )
+		set( config, nodeName );
+	return this;
 }
 
 
