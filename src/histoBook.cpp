@@ -318,11 +318,11 @@ histoBook* histoBook::set( xmlConfig* config, string nodePath ){
 }
 histoBook* histoBook::set( string opt, vector<string> params ){
 
-	cout  << "Setting : " << opt << endl;
-	for ( int i = 0; i < params.size(); i++ ){
-		cout << params[ i ] << " ";
-	}
-	cout << endl;
+	//cout  << "Setting : " << opt << endl;
+	//for ( int i = 0; i < params.size(); i++ ){
+	//	cout << params[ i ] << " ";
+	//}
+	//cout << endl;
 	// force the param name to lowercase
 	transform(opt.begin(), opt.end(), opt.begin(), ::tolower);
 
