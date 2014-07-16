@@ -5,7 +5,7 @@
 		<dataDir maxFiles="1" >/star/institutions</dataDir>
 		<maxFiles>1</maxFiles>
 	</input>
-	<array>
+	<array hide="true">
 		<dates index="vv">
 			<vv>                                  12-12-02</vv>
 			<vv>13-12-01</vv>

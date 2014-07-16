@@ -166,7 +166,7 @@ public:
 
 	void display( string nName ){
 
-		if ( getBool( hName + ":hide" ) ){
+		if ( getBool( nName + ":hide" ) ){
 			return;
 		}
 
@@ -335,7 +335,9 @@ public:
 	// report
 	void report( xml_node<> * bn = NULL, string cp = "") {
 		
-
+		if ( getBool( cp + ":hide" ) )
+			return;
+		
 		string np = cp;
 		stringstream sstr;
 		stringstream n;
