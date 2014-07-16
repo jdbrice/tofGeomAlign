@@ -262,30 +262,12 @@ histoBook* histoBook::style( string histName ){
 
 histoBook* histoBook::set( string param, string p1, string p2, string p3, string p4 ){
 	
-
-	set( param, vector<string>({ p1, p2, p3, p4}));
-	/*
-	// force the param name to lowercase
-	transform(param.begin(), param.end(), param.begin(), ::tolower);
-
-    TH1* h = get( styling );
-    if ( h ){
-
-	    if ( "title" == param ){
-	    	h->SetTitle( p1.c_str() );
-	    } else if ( "x" == param ){
-	    	h->GetXaxis()->SetTitle( p1.c_str() );
-	    } else if ( "y" == param ){
-	    	h->GetYaxis()->SetTitle( p1.c_str() );
-	    } else if ( "legend" == param ){
-	    	if ( p2 == "")
-	    		p2="lpf";
-	    	legend->AddEntry( h, p1.c_str(), p2.c_str() );
-			legend->Draw();
-	    } else if ( "draw" == param ){
-	    	drawOption = p1;
-	    }
-	}*/
+	vector<string> l;
+	l.push_back( p1 );
+	l.push_back( p2 );
+	l.push_back( p3 );
+	l.push_back( p4 );
+	set( param, l );
 
 	return this;
 }
@@ -311,79 +293,6 @@ histoBook* histoBook::set( string param, double p1, double p2, double p3, double
 	list.push_back( sstr.str() );
 
 	set( param, list );
-
-/*
-	transform(param.begin(), param.end(), param.begin(), ::tolower);
-
-    TH1* h = get( styling );
-    if ( h ){
-
-	    if ( "linecolor" == param ){
-
-	    	h->SetLineColor( (int) p1 );
-	    } else if ( "domain" == param ){
-	    	double min = p1;
-	    	double max = p2;
-		    h->GetXaxis()->SetRangeUser( min, max );
-	    } else if ( "dynamicdomain" == param ){
-	    	double thresh = p1;
-	    	int min = (int)p2;
-	    	int max = (int)p3;
-	    	int axis = (int)p4;		// 1 = x, 2 = y
-
-	    	if ( 1 != axis && 2 != axis )
-	    		axis = 1;
-	    	
-	    	if ( thresh >= 0) {
-	    		if ( -1 >= min )
-	    			min = h->FindFirstBinAbove( thresh, axis );
-	    		if ( -1 >= max )
-	    			max = h->FindLastBinAbove( thresh, axis );
-	    	}
-	    	
-	    	if ( 1 == axis )
-		  	  h->GetXaxis()->SetRange( min, max );
-		  	else if ( 2 == axis )
-		  		h->GetYaxis()->SetRange( min, max );
-
-	    }  else if ( "range" == param ){
-
-	    	double min = p1;
-	    	double max = p2;
-	    	
-	    	h->GetYaxis()->SetRangeUser( min, max );
-	    } else if ( "markercolor" == param ) {
-	    	h->SetMarkerColor( (int)p1 );
-	    } else if ( "markerstyle" == param ) {
-	    	h->SetMarkerStyle( (int)p1 );
-	    } else if ( "legend" == param ){
-	    	// p1 - alignmentX
-	    	// p2 - alignmentY
-	    	// p3 - width
-	    	// p4 - height
-
-	    	// make sure option is valid
-	    	if ( !(legendAlignment::center == p1 || legendAlignment::left == p1 || legendAlignment::right == p1) )
-	    		p1 = legendAlignment::best;
-	    	if ( !(legendAlignment::center == p2 || legendAlignment::top == p2 || legendAlignment::bottom == p2) )
-	    		p2 = legendAlignment::best;
-	    	placeLegend( p1, p2, p3, p4 );
-	    } else if ( "numberofticks" == param ){
-	    	// p1 - # of primary divisions
-	    	// p2 - # of secondary divisions
-	    	// p3 - axis : 0 or 1 = x, 2 = y
-	    	
-	    	if ( p2 == -1 )
-	    		p2 = 0;
-
-		    if ( 2 == (int)p3 )
-		    	h->GetYaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
-		    else 
-		    	h->GetXaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
-	    }
-
-    }
-    */
     
 	return this;
 }
@@ -404,6 +313,8 @@ histoBook* histoBook::set( xmlConfig* config, string nodePath ){
 		set( list[ i ].first, params );
 
 	}
+
+	return this;
 }
 histoBook* histoBook::set( string opt, vector<string> params ){
 
