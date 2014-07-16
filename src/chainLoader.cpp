@@ -5,7 +5,7 @@
 
 void chainLoader::load( 
 						TChain * chain, 	// the chain object to fill
-						char* ntdir, 		// the directory in which to look for ntuples
+						const char* ntdir, 	// the directory in which to look for ntuples
 						uint maxFiles 
 						) {
 	//cout << " [chainLoader] searching " << ntdir << " for ntuples" << endl;
@@ -23,8 +23,10 @@ void chainLoader::load(
 
 	    	if ( strstr( ent->d_name, "root") ){
 	    		
-	    		if ( nFiles >= maxFiles ) 
+	    		if ( nFiles >= maxFiles ) {
 	    			go = false;
+	    			break;
+	    		}
 
 	    		char fn[ 1024 ];
 	    		sprintf( fn, "%s%s", ntdir, ent->d_name );
@@ -36,7 +38,7 @@ void chainLoader::load(
 	    	}
 	  	}
 	  	
-	  	cout << "[chainLoader] " << (nFiles - 1) << " files loaded into chain" << endl;
+	  	cout << "[chainLoader] " << (nFiles) << " files loaded into chain" << endl;
 
 	  	closedir (dir);
 	}

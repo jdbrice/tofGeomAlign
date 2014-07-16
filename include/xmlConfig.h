@@ -73,7 +73,7 @@ public:
 		throw(errno);
 	}
 
-	int getInt( char* nName, int def = 0 ){
+	int getInt( string nName, int def = 0 ){
 		if ( !nodeExists( nName ) )
 			return def;
 
@@ -84,7 +84,7 @@ public:
 
 		return def;
 	}
-	bool getBool( char* nName, bool def = false ) {
+	bool getBool( string nName, bool def = false ) {
 		if ( !nodeExists( nName ) )
 			return def;
 
@@ -106,7 +106,7 @@ public:
 		}
 		return def;
 	}
-	double getDouble( char* nName, double def = 0 ){
+	double getDouble( string nName, double def = 0 ){
 		if ( !nodeExists( nName ) )
 			return def;
 
@@ -118,8 +118,7 @@ public:
 		return def;
 	}
 
-
-	string getString( char* nName, string def = "", bool trimW = true ){
+	string getString( string nName, string def = "", bool trimW = true ){
 		
 		if ( !nodeExists( nName ) )
 			return def;
@@ -164,7 +163,7 @@ public:
 		return def;
 	}
 
-	void display( char* nName ){
+	void display( string nName ){
 		// if it is a vector print it that way
 		stringstream sstr;
 		std::vector<string> v = getStringVector( nName );
@@ -181,7 +180,7 @@ public:
 		cout << "[" << fname <<  "] " << std::left << setw(20) <<  nName  << getString( nName ) << endl;
 	}
 
-	vector<string> getStringVector( char* nName, bool trimW = true ){
+	vector<string> getStringVector( string nName, bool trimW = true ){
 		stringstream sstr;
 
 		std::vector<string> res;
@@ -226,7 +225,7 @@ public:
 
 		return res;
 	}
-	vector<double> getDoubleVector( char* nName ){
+	vector<double> getDoubleVector( string nName ){
 		vector<string> str = getStringVector( nName );
 		vector<double> res;
 		for ( uint i = 0; i < str.size(); i++ ){
@@ -235,7 +234,7 @@ public:
 		return res;
 	}
 
-	bool nodeExists( char* nName ){
+	bool nodeExists( string nName ){
 		vector<string> ntf = split( nName, '.' );
 		vector<string> attr = split( nName, ':' );
 		if ( attr.size() >= 2 ){
@@ -260,7 +259,18 @@ public:
 		return false;
 	}
 
-	bool isVector( char* nName ){
+	string tagName( string nName ){
+		vector<string> ntf = split( nName, '.' );
+		vector<string> attr = split( nName, ':' );
+		if ( attr.size() >= 2 ){
+			ntf[ ntf.size() - 1 ] = ntf[ ntf.size() - 1 ].substr( 0, ntf[ ntf.size() - 1 ].length() - (attr[ 1].length() + 1) );
+		}
+		if ( ntf.size() >= 1 )
+			return ntf[ ntf.size() - 1 ];
+		return "";
+	}
+
+	bool isVector( string nName ){
 
 		if ( nodeExists( nName )){
 

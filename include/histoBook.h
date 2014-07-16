@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <stdarg.h>
+#include "xmlConfig.h"
 
 using namespace std;
 
@@ -70,6 +71,7 @@ public:
 					uint nBinsX, double lowX, double hiX, uint nBinsY, double lowY, double hiY );
 	void make2D( 	string name, string title, 
 					uint nBinsX, const Double_t* xBins, uint nBinsY, double lowY, double hiY );
+	void make( xmlConfig * config, string nodeName );
 
 	TLegend* getLegend() { return legend; }
 

@@ -68,7 +68,7 @@ void histoBook::loadRootDir( TDirectory* tDir, string path ){
 	TKey* key;  
 	TObject* obj;   
 	
-	while ( key = (TKey*)next() ) {    
+	while ( (key = (TKey*)next()) ) {    
 		
 		obj = key->ReadObj() ;    
 		
@@ -138,6 +138,28 @@ string histoBook::cd( string sdir  ){
 	currentDir = sdir;
 
 	return old;
+}
+
+void histoBook::make( xmlConfig * config, string nodeName ){
+
+	if ( config && config->nodeExists( nodeName ) ){
+		
+		string hName = config->tagName( nodeName );
+		if ( "" == hName )
+			hName = nodeName;
+
+		string type = config->getString( nodeName + ":type", "1D" );
+
+		if ( "1D" == type ){
+			make1D( hName, config->getString( nodeName + ":title", hName ), 
+					config->getInt( nodeName + ":nBinsX", 1 ), config->getDouble( nodeName + ":x1", 0 ),
+					config->getDouble( nodeName + ":x2", 1 ) );
+
+		} else if ( "2D" == type ){
+
+		}
+	}
+
 }
 
 void histoBook::make1F( string name, string title, uint nBins, double low, double hi  ){
