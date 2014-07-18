@@ -40,6 +40,7 @@ histoBook::histoBook( string name, string input, string inDir ){
 		fin->cd( inDir.c_str() );
 		loadRootDir( gDirectory, inDir );
 	}
+
 }
 
 /**
@@ -402,9 +403,15 @@ histoBook* histoBook::set( string opt, vector<string> params ){
 	    } else if ( "draw" == opt ){
 	    	drawOption = cParam(params, 0);
 	    } else if ( "linecolor" == opt ){
-	    	h->SetLineColor( (int) dParam( params, 0) );
+	    	int c = color( cParam( params, 0) );
+	    	if ( c  < 0 )
+	    		c = (int) dParam( params, 0);
+	    	h->SetLineColor( c );
 	    } else if ( "fillcolor" == opt ){
-	    	h->SetFillColor( (int) dParam( params, 0) );
+	    	int c = color( cParam( params, 0) );
+	    	if ( c  < 0 )
+	    		c = (int) dParam( params, 0);
+	    	h->SetFillColor( c );
 	    } else if ( "linewidth" == opt ){
 	    	h->SetLineWidth( dParam( params, 0) );
 	    } else if ( "domain" == opt ){
@@ -439,7 +446,10 @@ histoBook* histoBook::set( string opt, vector<string> params ){
 	    	
 	    	h->GetYaxis()->SetRangeUser( min, max );
 	    } else if ( "markercolor" == opt ) {
-	    	h->SetMarkerColor( (int)dParam( params, 0) );
+	    	int c = color( cParam( params, 0) );
+	    	if ( c  < 0 )
+	    		c = (int) dParam( params, 0);
+	    	h->SetMarkerColor( c );
 	    } else if ( "markerstyle" == opt ) {
 	    	h->SetMarkerStyle( (int)dParam( params, 0) );
 	    } else if ( "legend" == opt ){

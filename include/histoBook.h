@@ -105,6 +105,17 @@ public:
 
 
 
+	int color( string color ) {
+		if ( "red" == color )
+			return kRed;
+		if ( "green" == color )
+			return kGreen;
+		if ( "blue" == color )
+			return kBlue;
+		if ( "black" == color )
+			return kBlack;
+		return -1;
+	}
 
 private:
 	void globalStyle();
@@ -129,6 +140,9 @@ private:
 		else 
 			return def;
 	}
+
+	
+
 
 
 };

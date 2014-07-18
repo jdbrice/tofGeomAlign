@@ -42,6 +42,8 @@ int main( int argc, char* argv[] ) {
     book->set( "legend", "help", "lpf" );
 
     book->makeAll( "h" );
+
+    cout << " red is : " << book->color( "green" ) << endl;
     //book->set( "hello", vector<string>( {"1", "2"} ) ) ;
 
     delete book;
