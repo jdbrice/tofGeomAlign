@@ -37,4 +37,10 @@
 		<s1 draw="colz" logY="1" range="0, 6" domain="0, 100" />
 	</style>
 
+	<h>
+		<a type="1D" title="dan" nBinsX="10" x1="1" x2="10" />
+		<b type="1D" title="dan1" nBinsX="10" x1="1" x2="10" />
+		<c type="1D" title="dan2" nBinsX="10" x1="1" x2="10" />
+	</h>
+
 </config>

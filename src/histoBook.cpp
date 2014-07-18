@@ -211,6 +211,22 @@ void histoBook::make( xmlConfig * config, string nodeName ){
 	}
 
 }
+void histoBook::makeAll( xmlConfig * con, string nodeName ){
+	
+	if ( !con )
+		return;
+	vector<string> paths = con->childrenOf( nodeName );
+
+	for ( int i=0; i < paths.size(); i++ ){
+		make( paths[ i ] );
+	}
+}
+void histoBook::makeAll( string nodeName ){
+	if ( !config )
+		return;
+
+	makeAll( config, nodeName );
+}
 
 void histoBook::make1F( string name, string title, uint nBins, double low, double hi  ){
 

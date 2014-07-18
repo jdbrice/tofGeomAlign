@@ -76,6 +76,8 @@ public:
 					uint nBinsX, const Double_t* xBins, uint nBinsY, double lowY, double hiY );
 	void make( xmlConfig * config, string nodeName );
 	void make( string nodeName );
+	void makeAll( string nodeName );
+	void makeAll( xmlConfig * config, string nodeName );
 
 	TLegend* getLegend() { return legend; }
 

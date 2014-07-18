@@ -74,6 +74,35 @@ public:
 		throw(errno);
 	}
 
+	xml_node<> * getNode( string path ){
+		if ( !nodeExists( path ) )
+			return NULL;
+
+		stringstream sstr; 
+
+	  	vector<string> ntf = split( path, '.' );
+	  	vector<string> attr = split( path, ':' );
+
+	  	if ( attr.size() >= 2 ){
+			ntf[ ntf.size() - 1 ] = ntf[ ntf.size() - 1 ].substr( 0, ntf[ ntf.size() - 1 ].length() - (attr[ 1].length() + 1) );
+		}
+
+		xml_node<> *node = doc.first_node();
+		for ( uint i = 0; i < ntf.size(); i++ ){
+			if ( node ){
+				node = node->first_node( ntf[ i ].c_str() );
+				if ( node && ntf.size() - 1 == i ){
+					
+					return node;
+				}
+			} else {
+				return NULL;	
+			}
+		}
+
+		return NULL;
+	}
+
 	int getInt( string nName, int def = 0 ){
 		if ( !nodeExists( nName ) )
 			return def;
@@ -163,6 +192,19 @@ public:
 
 		return def;
 	}
+
+	vector<string> childrenOf( string path ){
+
+		vector<string> paths;
+		xml_node<>* node = getNode( path );
+		if ( node ){
+			for (xml_node<> *child = node->first_node(  ); child; child = child->next_sibling() ){
+				
+				paths.push_back( path + "." + child->name()  );
+			}
+		} 
+		return paths;
+	} 
 
 	void display( string nName ){
 

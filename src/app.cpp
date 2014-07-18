@@ -33,12 +33,15 @@ int main( int argc, char* argv[] ) {
     xmlConfig config( argv[ 1 ] );
     config.report();
     
+    config.childrenOf( "input" );
     cout << "file: " << config.getString( "input.rootIn:file" ) << endl;
     
-    histoBook* book = new histoBook( "out.root", config.getString( "input.rootIn:file" ) );
+    histoBook* book = new histoBook( "out.root", &config, config.getString( "input.rootIn:file" ) );
 
     book->set( &config, "style.s1" );
     book->set( "legend", "help", "lpf" );
+
+    book->makeAll( "h" );
     //book->set( "hello", vector<string>( {"1", "2"} ) ) ;
 
     delete book;
