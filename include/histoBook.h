@@ -39,6 +39,7 @@ private:
 
 	string currentDir;
 
+	std::map<string, string> configPath;
 	std::map<string, TH1*> book;
 	
 	string filename;

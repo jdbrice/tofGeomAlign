@@ -44,6 +44,8 @@ int main( int argc, char* argv[] ) {
     book->makeAll( "h" );
 
     cout << " red is : " << book->color( "green" ) << endl;
+    book->style( "a" );
+    book->style( "b" );
     //book->set( "hello", vector<string>( {"1", "2"} ) ) ;
 
     delete book;

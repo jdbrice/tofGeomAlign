@@ -194,6 +194,9 @@ void histoBook::make( xmlConfig * config, string nodeName ){
 		if ( "" == hName )
 			hName = nodeName;
 
+		// store the path in the config file
+		configPath[ hName ] = nodeName;
+
 		string type = config->getString( nodeName + ":type", "1D" );
 
 		if ( "1D" == type ){
@@ -208,6 +211,7 @@ void histoBook::make( xmlConfig * config, string nodeName ){
 					config->getInt( nodeName + ":nBinsY", 1 ), config->getDouble( nodeName + ":y1", 0 ),
 					config->getDouble( nodeName + ":y2", 1 ) );
 		}
+
 	
 	}
 
@@ -319,6 +323,12 @@ void histoBook::globalStyle(){
 
 histoBook* histoBook::style( string histName ){
 	styling = histName;
+	
+	if ( config && config->nodeExists( configPath[ histName ] + ".style" ) ){
+		cout << "setting : " << configPath[histName] + ".style" << "as default style " << endl;
+		set( configPath[histName] + ".style" );
+	}
+
 	return this;
 }
 
