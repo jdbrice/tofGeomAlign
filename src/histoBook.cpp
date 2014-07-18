@@ -387,6 +387,10 @@ histoBook* histoBook::set( string opt, vector<string> params ){
 	    	drawOption = cParam(params, 0);
 	    } else if ( "linecolor" == opt ){
 	    	h->SetLineColor( (int) dParam( params, 0) );
+	    } else if ( "fillcolor" == opt ){
+	    	h->SetFillColor( (int) dParam( params, 0) );
+	    } else if ( "linewidth" == opt ){
+	    	h->SetLineWidth( dParam( params, 0) );
 	    } else if ( "domain" == opt ){
 	    	double min = dParam( params, 0);
 	    	double max = dParam( params, 1);
