@@ -285,6 +285,9 @@ TH2* histoBook::get2D( string name, string sdir  ){
 		sdir = currentDir;
 	return (TH2*)book[ ( sdir  + name  ) ];
 }
+TH3* histoBook::get3D( string name, string sdir ){
+	return (( TH3* ) get( name, sdir ));
+}
 
 void histoBook::fill( string name, double bin, double weight ){ 
 	if ( get( name ) != 0)

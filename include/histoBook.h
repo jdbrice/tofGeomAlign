@@ -67,6 +67,7 @@ public:
 	void add( string name, TH1 * );
 	TH1* get( string name, string sdir = "" );
 	TH2* get2D( string name, string sdir = "" );
+	TH3* get3D( string name, string sdir = "" );
 	void fill( string name, double bin, double weight = 1);
 	void make1F( string name, string title, uint nBins, double low, double hi );
 	void make1D( string name, string title, uint nBins, double low, double hi );

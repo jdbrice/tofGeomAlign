@@ -15,6 +15,7 @@
 #include "TChain.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TH3.h"
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TProfile.h"
