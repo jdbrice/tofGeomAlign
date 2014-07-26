@@ -38,6 +38,10 @@ int main( int argc, char* argv[] ) {
     
     histoBook* book = new histoBook( "out.root", &config, config.getString( "input.rootIn:file" ) );
 
+    cout << " book : " << book->get( "nSig_K_All" ) << endl;
+    
+
+
     book->set( &config, "style.s1" );
     book->set( "legend", "help", "lpf" );
 

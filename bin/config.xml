@@ -1,7 +1,7 @@
 <config>
 
 	<input>
-		<rootIn file="qa.root" />
+		<rootIn file="dqa.root" />
 		<dataDir maxFiles="1" >/star/institutions</dataDir>
 		<maxFiles>1</maxFiles>
 	</input>
