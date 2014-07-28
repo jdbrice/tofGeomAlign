@@ -42,7 +42,7 @@
 			<style draw="h" linecolor="red" />
 		</a>
 
-		<b type="1D" title="dan1" nBinsX="10" x1="1" x2="10" />
+		<b type="1D" title="dan1" nBinsX="10" x1="1" x2="10" style="style.s1" />
 		<c type="1D" title="dan2" nBinsX="10" x1="1" x2="10" />
 	</h>
 

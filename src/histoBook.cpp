@@ -330,6 +330,9 @@ histoBook* histoBook::style( string histName ){
 	// set the default style if it is there
 	if ( config && config->nodeExists( configPath[ histName ] + ".style" ) ){
 		set( configPath[histName] + ".style" );
+	} else if ( config && config->nodeExists( configPath[ histName ] + ":style" ) && config->nodeExists( config->getString( configPath[ histName ] + ":style" ) ) ){
+		set( config->getString( configPath[ histName ] + ":style" ) );
+		cout << "hello " << endl;
 	}
 
 	return this;
