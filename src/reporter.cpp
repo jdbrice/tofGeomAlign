@@ -55,3 +55,11 @@ void reporter::savePage( string name ) {
 	else 
 		canvas->Print( name.c_str() );
 }
+
+void reporter::saveImage( string name = "" ){
+	string outName = styling + ".png";
+	if ( "" != name )
+		outName = name;
+	canvas->SaveAs( outName.c_str() );
+	return this;
+}

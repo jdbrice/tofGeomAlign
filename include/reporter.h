@@ -14,6 +14,7 @@ public:
 	void cd( int padX, int padY);
 	void next();
 	void savePage( string name = "" );
+	void saveImage( string name = "" );
 
 private:
 
