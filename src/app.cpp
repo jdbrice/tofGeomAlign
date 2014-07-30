@@ -29,33 +29,33 @@ int main(int argc, char* argv[]) {
 int main( int argc, char* argv[] ) {
 
 	cout << "const: " << Constants::nChannels << endl;
-  if ( argc >= 2 ){
-    xmlConfig config( argv[ 1 ] );
-    config.report();
-    
-    config.childrenOf( "input" );
-    cout << "file: " << config.getString( "input.rootIn:file" ) << endl;
-    
-    histoBook* book = new histoBook( "out.root", &config, config.getString( "input.rootIn:file" ) );
+    if ( argc >= 2 ){
+        xmlConfig config( argv[ 1 ] );
+        config.report();
 
-    cout << " book : " << book->get( "nSig_K_All" ) << endl;
-    
+        config.childrenOf( "input" );
+        cout << "file: " << config.getString( "input.rootIn:file" ) << endl;
 
+        histoBook* book = new histoBook( "out.root", &config, config.getString( "input.rootIn:file" ) );
 
-    book->set( &config, "style.s1" );
-    book->set( "legend", "help", "lpf" );
+        cout << " book : " << book->get( "nSig_K_All" ) << endl;
 
-    book->makeAll( "h" );
+        if ( book->exists( "nSig_K_All" ) )
+            book->style( "nSig_K_All" )->draw( )->exportAs();
 
-    cout << " red is : " << book->color( "green" ) << endl;
-    book->style( "a" );
-    book->style( "b" );
-    //book->set( "hello", vector<string>( {"1", "2"} ) ) ;
+        book->set( &config, "style.s1" );
+        book->set( "legend", "help", "lpf" );
 
-    delete book;
-    
+        book->makeAll( "h" );
 
-  }
+        cout << " red is : " << book->color( "green" ) << endl;
+        book->style( "a" );
+        book->style( "b" );
+        //book->set( "hello", vector<string>( {"1", "2"} ) ) ;
+
+        delete book;
+        
+    }
 
 
 	return 0;

@@ -105,7 +105,13 @@ public:
 	histoBook* set( string nodePath );
 	histoBook* set( string opt, vector<string> nodePath );
 
+	histoBook* exportAs( string filename = "" );
 
+	bool exists( string name, string sdir = "" ){
+		if ( NULL != get( name, sdir ) )
+			return true;
+		return false;
+	}
 
 	int color( string color ) {
 		if ( "red" == color )

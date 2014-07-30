@@ -295,6 +295,16 @@ void histoBook::fill( string name, double bin, double weight ){
 }
 
 
+histoBook* histoBook::exportAs( string filename ) {
+
+	string outName = styling + ".png";
+	if ( "" != filename )
+		outName = filename;
+	gPad->SaveAs( outName.c_str() );
+	return this;
+
+}
+
 void histoBook::globalStyle(){
 
 	gStyle->SetCanvasColor(kWhite);     // background is no longer mouse-dropping white
