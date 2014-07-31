@@ -201,14 +201,18 @@ void histoBook::make( xmlConfig * config, string nodeName ){
 
 		
 		if ( "1D" == type ){
-			if ( !config->nodeExists( nodeName + ".xBins" ) ){
+			if ( config->nodeExists( nodeName + ".xBins" ) ){
+				
 				vector<double> xBins = config->getDoubleVector( nodeName + ".xBins" );
 				make1D( hName, config->getString( nodeName + ":title", hName ), 
 					xBins.size() - 1, xBins.data() );
+
 			} else if ( config->nodeExists( nodeName + ":xBins" ) ) {
-				vector<double> xBins = config->getDoubleVector( nodeName + config->getString( nodeName + ":xBins" ) );
+
+				vector<double> xBins = config->getDoubleVector( config->getString( nodeName + ":xBins" ) );
 				make1D( hName, config->getString( nodeName + ":title", hName ), 
 					xBins.size() - 1, xBins.data() );
+
 			} else {	
 			make1D( hName, config->getString( nodeName + ":title", hName ), 
 					config->getInt( nodeName + ":nBinsX", 1 ), config->getDouble( nodeName + ":x1", 0 ),

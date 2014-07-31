@@ -37,12 +37,27 @@
 		<s1 draw="colz" logY="1" range="0, 6" domain="0, 100" />
 	</style>
 
+	<bins>
+		<p>
+			<v>1</v>
+			<v>2</v>
+			<v>3</v>
+			<v>4</v>
+			<v>5</v>
+			<v>6</v>
+			<v>7</v>
+			<v>8</v>
+		</p>
+	</bins>
+
 	<h>
 		<a type="1D" title="dan" nBinsX="10" x1="1" x2="10" >
 			<style draw="h" linecolor="red" />
 		</a>
 
-		<b type="1D" title="dan1" nBinsX="10" x1="1" x2="10" style="style.s1" />
+		<b type="1D" title="dan1" xBins="bins.p" style="style.s1" >
+			<xBins><v>1</v> <v>1.5</v> <v>3</v> </xBins>
+		</b>
 		<c type="1D" title="dan2" nBinsX="10" x1="1" x2="10" />
 	</h>
 
