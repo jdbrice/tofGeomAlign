@@ -275,6 +275,10 @@ public:
 
 		std::vector<string> res;
 
+		if ( "" != getString( nName ) ){
+			return vectorFromString( getString( nName )  );
+		}
+
 		vector<string> ntf = split( nName, '.' );
 
 		string index = "v";
@@ -315,6 +319,18 @@ public:
 
 		return res;
 	}
+
+	vector<string> vectorFromString( string data ){
+		
+		vector<string> d = split( data, ',' );
+		
+		for ( int i = 0; i < d.size(); i++ ){
+			d[ i ] = trim( d[ i ] );
+		}
+		return d;
+
+	}
+
 	vector<double> getDoubleVector( string nName ){
 		vector<string> str = getStringVector( nName );
 		vector<double> res;

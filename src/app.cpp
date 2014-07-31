@@ -46,12 +46,17 @@ int main( int argc, char* argv[] ) {
         book->set( &config, "style.s1" );
         book->set( "legend", "help", "lpf" );
 
+        cout << "bins.p" << config.getString( "bins.p" ) << endl;
+
         book->makeAll( "h" );
 
         cout << " red is : " << book->color( "green" ) << endl;
         book->style( "a" );
         book->style( "b" );
         //book->set( "hello", vector<string>( {"1", "2"} ) ) ;
+
+        vector<double> t = config.getDoubleVector( "bins.p2" );
+        
 
         delete book;
         

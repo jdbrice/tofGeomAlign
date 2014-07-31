@@ -48,6 +48,7 @@
 			<v>7</v>
 			<v>8</v>
 		</p>
+		<p2> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 15, 18, 19 </p2>
 	</bins>
 
 	<h>
@@ -55,8 +56,8 @@
 			<style draw="h" linecolor="red" />
 		</a>
 
-		<b type="1D" title="dan1" xBins="bins.p" style="style.s1" >
-			<xBins><v>1</v> <v>1.5</v> <v>3</v> </xBins>
+		<b type="1D" title="dan1" xBins="bins.p2" style="style.s1" >
+			
 		</b>
 		<c type="1D" title="dan2" nBinsX="10" x1="1" x2="10" />
 	</h>
