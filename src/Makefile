@@ -13,7 +13,8 @@ ROOTGLIBS     	= $(shell root-config --glibs)
 
 # Custom Project includes and libs
 includes		= -I../include -I. -I$(ROOTSYS)/include -I$(ROOTDEV)/include 
-libraries 			= 	$(ROOTLIBS) -lGui -lHtml -lGuiHtml $(CERNLIBS) $(SYSLIBS) \
+libraries 			= 	$(ROOTLIBS)
+#-lGui -lHtml -lGuiHtml \
 
 cxx 		= g++ -std=c++0x
 flags 		= -Wall -g $(ROOTCFLAGS) $(includes) -Wno-write-strings -m32 -fno-inline
@@ -23,7 +24,7 @@ ldFlags  	= -m32 -g
 all: $(project)
 
 $(project): $(objects)
-		$(cxx) $(ldFlags) -o  $(project) $(objects) $(ROOTGLIBS) $(libraries)
+		$(cxx) $(ldFlags) -o  $(project) $(objects)  $(libraries)
 		@cp $(project) ../bin
 
 %.o: %$(source)

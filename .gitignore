@@ -18,5 +18,10 @@
 /bin/*.dat
 /bin/*.pdf
 /bin/*.xml
+/bin/july*
+/bin/pass*
 # but keep the sample config
 !/bin/config.xml
+
+#other
+/data

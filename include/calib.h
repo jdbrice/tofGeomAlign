@@ -71,6 +71,9 @@ public:
 	// finish the calibration by conducting fits etc.
 	void savePage();
 
+	// writes out a geom alignment file
+	void writeAlignment();
+
 protected:
 
 	/*

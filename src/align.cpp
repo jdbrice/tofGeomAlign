@@ -22,6 +22,7 @@ int main( int argc, char* argv[] ) {
        	return 0;
 
     } 
+    gErrorIgnoreLevel=kError + 1000;
 
     /* Give a summary of config file */
     xmlConfig config( argv[ 1 ] );
@@ -61,11 +62,11 @@ int main( int argc, char* argv[] ) {
  
     if ( jobType == (string)"calibrate" ){
 
+        
         tofCalib.localPosition();
-
         tofCalib.fitY();
-
         tofCalib.fitXAndZ();
+        tofCalib.writeAlignment();
         
     }
 

@@ -1,9 +1,11 @@
 
 
 #include "histoBook.h"
+#include "TKey.h"
+#include "TObject.h"
 
 // constructor sets the name of the file for saving
-histoBook::histoBook( string name ){
+histoBook::histoBook( string name, string input, string inDir ){
 
 	if (name.find(  ".root") != std::string::npos){
 		filename = name;	
@@ -15,14 +17,25 @@ histoBook::histoBook( string name ){
 	file = new TFile( filename.c_str(), "recreate" );
 	file->cd();
 
-	TCanvas *tmp = new TCanvas( "tmpCanvas", "tmp", 10, 10 );
-	legend = new TLegend( 0.75, 0.75, 0.9, 0.9);
+	
+	// make the legend and draw it once to apply styles etc. 
+	// for some reason needed to make styling work on the first draw
+	legend = new TLegend( 0.65, 0.65, 0.9, 0.9);
 	legend->SetFillColor( kWhite );
 	legend->Draw();
 	legend->Clear();
-	delete tmp;
 
 	globalStyle();
+
+	// if an input was given merge it into the live record
+	if ( input.length() >= 5 ){
+		TFile * fin = new TFile( input.c_str() );
+		cd ( inDir );
+		fin->cd( inDir.c_str() );
+		loadRootDir( gDirectory, inDir );
+	}
+
+
 
 }
 // destructor
@@ -36,6 +49,52 @@ histoBook::~histoBook(){
 void histoBook::save() {
 
 	file->Write();
+}
+
+void histoBook::loadRootDir( TDirectory* tDir, string path ){
+
+	//cout << "histoBook.loadRootDir] Path : " << path << endl;
+
+	TList* list;
+
+	if ( tDir ){
+		list = tDir->GetListOfKeys();  
+	} else {
+		cout << "[histoBook.loadRootDir] Bad Directory Given " << endl;
+		return;
+	}
+
+	TIter next(list);  
+	TKey* key;  
+	TObject* obj;   
+	
+	while ( key = (TKey*)next() ) {    
+		
+		obj = key->ReadObj() ;    
+		
+		if ( 0 == strcmp(obj->IsA()->GetName(),"TDirectoryFile") ){
+			TDirectoryFile* dir = (TDirectoryFile*)obj;
+			
+			string nPath = path + dir->GetName();
+			if ( path == (string) "" )
+				nPath = path + dir->GetName();
+			else 
+				nPath = path + "/" + dir->GetName();
+
+			cd( nPath );
+			loadRootDir( dir, nPath );
+		} else if ( obj ){
+			if (    (strcmp(obj->IsA()->GetName(),"TProfile")!=0) && (!obj->InheritsFrom("TH2") && (!obj->InheritsFrom("TH1"))) ) {      
+				// not a 1d or 2d histogram
+			} else {
+				// add it to the book
+				//cout << "Adding : " << obj->GetName() << endl;
+				add( obj->GetName(), (TH1*)obj->Clone( obj->GetName() ) );
+			}    
+			
+		}
+	}	
+
 }
 
 
@@ -61,7 +120,7 @@ void histoBook::add( string name, TH1* h ){
 *
 * TODO:: add support for full subdirectory trees
 */
-string histoBook::cd( string sdir = "/" ){
+string histoBook::cd( string sdir  ){
 
 	string old = currentDir;
 
@@ -71,7 +130,7 @@ string histoBook::cd( string sdir = "/" ){
 	if ( file->GetDirectory( csdir ) ){
 		file->cd( csdir );
 	} else {
-		//cout << "[histoBook.cd] creating directory " << sdir << endl;
+		cout << "[histoBook.cd] creating directory " << sdir << endl;
 		file->mkdir( csdir );
 		file->cd( csdir );
 	}
@@ -203,6 +262,7 @@ histoBook* histoBook::set( string param, string p1, string p2, string p3, string
 
 histoBook* histoBook::set( string param, double p1, double p2, double p3, double p4  ){
 
+
 	transform(param.begin(), param.end(), param.begin(), ::tolower);
 
     TH1* h = get( styling );
@@ -219,16 +279,23 @@ histoBook* histoBook::set( string param, double p1, double p2, double p3, double
 	    	double thresh = p1;
 	    	int min = (int)p2;
 	    	int max = (int)p3;
+	    	int axis = (int)p4;		// 1 = x, 2 = y
+
+	    	if ( 1 != axis && 2 != axis )
+	    		axis = 1;
 	    	
 	    	if ( thresh >= 0) {
 	    		if ( -1 >= min )
-	    			min = h->FindFirstBinAbove( thresh );
+	    			min = h->FindFirstBinAbove( thresh, axis );
 	    		if ( -1 >= max )
-	    			max = h->FindLastBinAbove( thresh );
-	    		
+	    			max = h->FindLastBinAbove( thresh, axis );
 	    	}
 	    	
-		    h->GetXaxis()->SetRange( min, max );
+	    	if ( 1 == axis )
+		  	  h->GetXaxis()->SetRange( min, max );
+		  	else if ( 2 == axis )
+		  		h->GetYaxis()->SetRange( min, max );
+
 	    }  else if ( "range" == param ){
 
 	    	double min = p1;
@@ -251,6 +318,18 @@ histoBook* histoBook::set( string param, double p1, double p2, double p3, double
 	    	if ( !(legendAlignment::center == p2 || legendAlignment::top == p2 || legendAlignment::bottom == p2) )
 	    		p2 = legendAlignment::best;
 	    	placeLegend( p1, p2, p3, p4 );
+	    } else if ( "numberofticks" == param ){
+	    	// p1 - # of primary divisions
+	    	// p2 - # of secondary divisions
+	    	// p3 - axis : 0 or 1 = x, 2 = y
+	    	
+	    	if ( p2 == -1 )
+	    		p2 = 0;
+
+		    if ( 2 == (int)p3 )
+		    	h->GetYaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
+		    else 
+		    	h->GetXaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
 	    }
 
     }

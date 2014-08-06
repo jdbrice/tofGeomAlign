@@ -54,11 +54,11 @@ private:
 
 public:
 
-	histoBook( string name );
+	histoBook( string name, string input = "", string inDir = "" );
 	~histoBook();
 
 	
-	string cd( string dir );
+	string cd( string dir = "/" );
 	void add( string name, TH1 * );
 	TH1* get( string name, string sdir = "" );
 	TH2* get2D( string name, string sdir = "" );
@@ -98,6 +98,8 @@ public:
 private:
 	void globalStyle();
 	histoBook* placeLegend( int alignmentX, int alignmentY, double width = -1, double height = -1 );
+	void loadRootDir( TDirectory*, string path = "" );
+
 
 };
 
