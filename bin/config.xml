@@ -1,0 +1,69 @@
+<config>
+
+	<input>
+		<rootIn file="dqa.root" />
+		<dataDir maxFiles="1" >/star/institutions</dataDir>
+		<maxFiles>1</maxFiles>
+	</input>
+	<array hide="true">
+		<dates index="vv">
+			<vv>                                  12-12-02</vv>
+			<vv>13-12-01</vv>
+			<vv>13-12-03</vv>
+			<vv>13-12-04</vv>
+		</dates>
+		
+		<tries>
+			<another>
+				<deep>
+					<v>1</v>
+					<v>2</v>
+					<v>3</v>
+				</deep>
+			</another>
+		</tries>
+		
+		<more></more>
+		<four>exists</four>
+	</array>
+
+	<dan>
+	adada
+	</dan>
+
+	<test>wrwerw</test>
+	<textText>
+		<vvv></vvv>
+		<turtle></turtle>
+	</textText>
+
+	<style>
+		<s1 draw="colz" logY="1" range="0, 6" domain="0, 100" />
+	</style>
+
+	<bins>
+		<p>
+			<v>1</v>
+			<v>2</v>
+			<v>3</v>
+			<v>4</v>
+			<v>5</v>
+			<v>6</v>
+			<v>7</v>
+			<v>8</v>
+		</p>
+		<p2> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 13, 15, 18, 19 </p2>
+	</bins>
+
+	<h>
+		<a type="1D" title="dan" nBinsX="10" x1="1" x2="10" >
+			<style draw="h" linecolor="red" />
+		</a>
+
+		<b type="1D" title="dan1" xBins="bins.p2" style="style.s1" >
+			
+		</b>
+		<c type="1D" title="dan2" nBinsX="10" x1="1" x2="10" />
+	</h>
+
+</config>

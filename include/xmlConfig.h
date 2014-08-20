@@ -271,16 +271,19 @@ public:
 	}
 
 	vector<string> getStringVector( string nName, bool trimW = true ){
-		stringstream sstr;
-
+		
 		std::vector<string> res;
+		if ( !nodeExists(nName) )
+			return res;
+		
+		stringstream sstr;
+		
 
 		if ( "" != getString( nName ) ){
 			return vectorFromString( getString( nName )  );
 		}
 
 		vector<string> ntf = split( nName, '.' );
-
 		string index = "v";
 
 		xml_node<> *node = doc.first_node();
