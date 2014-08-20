@@ -2,16 +2,27 @@
 #include "utils.h"
 #include "allroot.h"
 
+
+
 namespace jdbUtils{
 
-	std::string ts( int i ){
-		return to_string( (long long int) i);
+	std::string ts( int i, int len ){
+		if ( len <= -1 )
+			return (to_string( (long long int) i));
+		else
+			return (to_string( (long long int) i)).substr( 0, len );
 	}
-	std::string ts( double d ){
-		return to_string( (long double) d);
+	std::string ts( double d, int len ){
+		if ( len <= -1 )
+			return to_string( (long double) d);
+		else 
+			return (to_string( (long double) d)).substr( 0, len );
 	}
-	std::string ts( uint u ){
-		return to_string( (long long uint) u);
+	std::string ts( uint u, int len ){
+		if ( len <= -1 )
+			return to_string( (long long unsigned int) u);
+		else 
+			return (to_string( (long long unsigned int) u)).substr( 0, len );
 	}
 
 	void progressBar( int i, int nevents, int max ){

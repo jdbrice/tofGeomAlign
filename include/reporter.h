@@ -1,3 +1,5 @@
+#ifndef REPORTER_H
+#define REPORTER_H
 
 #include "allroot.h"
 
@@ -11,7 +13,8 @@ public:
 	void cd( int pad );
 	void cd( int padX, int padY);
 	void next();
-	void savePage();
+	void savePage( string name = "" );
+	void saveImage( string name = "" );
 
 private:
 
@@ -23,3 +26,5 @@ private:
 	static int instances;
 
 };
+
+#endif

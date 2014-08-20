@@ -1,104 +1,122 @@
-tofGeomAlign
-============
-
-Project for performing the TOF to TPC geometry alignment
+root
+====
 
 
-## Workflow
-1)	Use the TOF Calibration nTuple Maker to produce nTuples in the TOF picoDst format with the nTupler set to use the ideal geometry with the geometry tag set according the the production that is being calibrated. See TOF Calibration nTupler Project for more details.
+## boiler
+This project is the starting place for root-based applications. It contains:
 
-2) Checkout this project into a clean working directory and build it: 
+####app
+The main application entry point
+
+####histoBook:
+A wrapper for working with root histograms. Allows easy use  of sub directories, auto-saving, etc. Usage:
+
+```c++
+histoBook * book  = new histoBook( "outputFilename" ); // .root will be added automatically if it is left off
+
+// make a sub directory call subdir1
+book->cd( "subdir1" );
+
+// now inside subdir1 make a TH2D just like constructor
+book->make2D( "h1", "h1 title", 100, 1, 100, 200, -100, 100 );
+
+
+// or make the histogram and add it to the book
+
+TH2D* tmp = new TH2D( 	"h2", "h2 title", 100, 1, 100, 400, -20, 20 );
+
+// now add the histogram to the book so it is managed
+book->add( "h2", tmp );
+
+
+// now get a histogram from the book
+sstr.str("");   	sstr << "h" << 1;
+TH2D* tmp = (TH2D*) book->get( sstr.str() );
+
+
+// now make a sub directory
+sstr.str("");		sstr << "subdir" << 1 << "/fit";
+book->cd( sstr.str() );
+
 ```
-$ cd some-working-directory	
-$ git clone <git-url>
-$ cd tofGeomAlign/bin
-$ ./fullbuild
-```
 
-3) Then run with a valid configuration file (See below) :
-```
-$ ./align path/to/configuration/file.xml > path/to/log.txt &
-```
+###chainLoader
+class for loading ntuple files into a TChain. Tt takes a chain object, a directory in which to search, and a max number of files to load. Usage:
 
-4) The alignment procedure will produce a QA root file and a QA PDF in addition to the GeometryAlignment.dat (or name given in config file). 
+```c++
+// static usage
+chainLoader::load( chain, "dataDir", maxFiles );
 
-5) Rerun the TOF Calibration nTuple Maker with the Ideal geometry flag turned off and the GeometryAlignment.dat file loaded instead.
+``` 
 
-6) Repeat Steps 3-5 until the X, Y, and Z offsets are within acceptable limits around zero.
+###xmlConfig
+A lightweight xml configuration utility. Usuful for storing project configurations and runtime-parameters. Usage:
 
-## Configuration File
-
-All configuration tags are case insensitive and must follow xml tag format
-The default value is given for optional tags.
-
-###Jobtype
-* Default : calibration
-  1. **calibrate**  
-performs a geometry alignment job
-  2. **plot**  
-plots the histograms showing the yLocal and zLocal hit distributions but does not do a full calibration
-
-###baseName
-Default : ""
-* The name to be prepended to all output files for easier record keeping. For instance give a basename of "run14AuAu14.6GeV" to make all root, PDF, etc appear as run14AuAu14.6GeV.{root, pdf, etc. } 
-
-###rootOutput
-* Default : "qa.root"
-* The name specific to the root output file name. The full name will be baseName+rootOutput. The '.root' suffix will be added if needed.
-
-###reportOutput
-* Default : "qa.pdf"
-* The name specific to the pdf report output file name. The full name will be baseName+reportOutput. The '.pdf' suffix should be specified.
-
-###geometryOutput
-* Default : "geometryAlignment.dat"
-* The name specific to the data output file. The full name will be baseName+geometryOutput. The '.dat' suffix should be specified.
-
-###dataDir
-* REQUIRED
-* The full path to the directory containing the TOF calibration picoDsts
-
-###maxFiles
-* Default : 10000
-* The maximum number of files to load from the <dataDir> directory for processing
-
-###ptCut
-* Default : 0.5 [GeV]
-* The pt cut applied to tracks matched to the tof hits
-
-###vzCut
-* Default : 30.0 [cm]
-* The cut applied to the TPC zVertex. TRacks must have a zVertex less than the cut value.
-
-###minHitsFit
-* Default : 25
-* The minimum number of hits in the track fit. Tracks with fewer hits used for the fit will not be used for the calibration.
-
-
-## Sample Configuration
-A sample configuration file:
+Sample Config File:
 ```xml
+
 <config>
 
-	<!-- perform the geometry alignment -->
 	<jobType>calibrate</jobType>
 
-	<!-- names for root, report, data file etc. -->
-	<baseName></baseName>
-	<rootOutput>qa</rootOutput>
-	<reportOutput>qa.pdf</reportOutput>
-	<geometryOutput>geometryAlignment.dat</geometryOutput>
+	<rootOutput>test/test.root</rootOutput>
 	
-	<!-- The directory containing the picoDsts -->
-	<dataDir>/star/institutions/rice/jdb/run13/pp510/tofCalibrationRun13/MuDstOutput/idealGeometry/output/</dataDir>
-	<!-- number of files to process -->
-	<maxFiles> 200 </maxFiles>
+	<variableBinning>1</variableBinning>
 
-	<!-- cuts to apply -->
-	<ptCut>0.5</ptCut>
-	<vzCut>30.0</vzCut>
-	<minHitsFit>25</minHitsFit>
+	<dataDir>/star/institutions/rice/jdb/run14AuAu15TofCalibration/TofCalibration/geomAlign/t14Data0/output/</dataDir>
+	
+	<maxFiles>10</maxFiles>
+
+	<numIterations>1</numIterations>
+
+	<paramsOutput>test/NULL.dat</paramsOutput>
+
+	<removeOffset>1.87987</removeOffset>
+
+	<outlierRejection>1</outlierRejection>
+
+	<numTOTBins>25</numTOTBins>
+
+	<reportOutput>test/qa.pdf</reportOutput>
 
 </config>
+
 ```
 
+Usage in code:
+
+```c++
+
+	// read the config file from the first passed in argument
+    xmlConfig config( argv[ 1 ] );
+
+    // get a parameter returned as string type
+    cout << "[CONFIG]" << setw(20) << left << " jobType is "        << config.getAsString( "jobType" ) << endl;
+
+    // get a parameter returned as a string type
+    cout << "[CONFIG]" << setw(20) << " rootOutput "      << config.getAsString( "rootOutput" ) << endl;
+
+    // get a parameter returned as a bool type
+    cout << "[CONFIG]" << setw(20) << " variableBinning " << config.getAsBool( "variableBinning" ) << endl;
+
+    // get a parameter returned as an int type
+    cout << "[CONFIG]" << setw(20) << " maxFiles "        << config.getAsInt( "maxFiles" ) << endl;
+
+    
+	// get a parameter returned as a double type
+    cout << "[CONFIG]" << setw(20) << " removeOffset "        << config.getAsDouble( "removeOffset" ) << endl;
+
+```
+
+
+
+## ntupleCleaner
+This is a tool for cleaning ntuples when a job has returned many good files mixed with many files that did not process and therefore do not contain the desired tree.
+
+This tool scans all ntuple files in a directory and removes the ones that do not contain the given tree.
+
+Usage:
+
+ntupleCleaner treeName dataDirectory maxFilesToScan
+
+Warning: Be careful using this, improper use could delete good data.

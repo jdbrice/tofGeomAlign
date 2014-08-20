@@ -49,6 +49,13 @@ void reporter::next(){
 	}
 }
 
-void reporter::savePage( ) {
-	canvas->Print( ( filename ).c_str() );
+void reporter::savePage( string name ) {
+	if ( "" == name )
+		canvas->Print( ( filename ).c_str() );
+	else 
+		canvas->Print( name.c_str() );
+}
+
+void reporter::saveImage( string name ){
+	canvas->SaveAs( name.c_str() );
 }

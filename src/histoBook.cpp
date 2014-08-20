@@ -4,7 +4,13 @@
 #include "TKey.h"
 #include "TObject.h"
 
-// constructor sets the name of the file for saving
+/**
+ * Creates a histobook and allows the root filename to be set. optionally read from an existing root 
+ * file and include everything into the working space
+ * @param name  root filename
+ * @param input input filename
+ * @param inDir input starting directory
+ */
 histoBook::histoBook( string name, string input, string inDir ){
 
 	if (name.find(  ".root") != std::string::npos){
@@ -35,9 +41,45 @@ histoBook::histoBook( string name, string input, string inDir ){
 		loadRootDir( gDirectory, inDir );
 	}
 
-
-
 }
+
+/**
+ * Constructor that allows th input of a config file
+ * @param name name of file to use for saving root data
+ * @param con  The config file to use for all config relates calls
+ */
+histoBook::histoBook( string name, xmlConfig * con, string input, string inDir ){
+
+	if (name.find(  ".root") != std::string::npos){
+		filename = name;	
+	} else
+		filename = name + ".root";
+
+	currentDir = "/";
+
+	file = new TFile( filename.c_str(), "recreate" );
+	file->cd();
+
+	// make the legend and draw it once to apply styles etc. 
+	// for some reason needed to make styling work on the first draw
+	legend = new TLegend( 0.65, 0.65, 0.9, 0.9);
+	legend->SetFillColor( kWhite );
+	legend->Draw();
+	legend->Clear();
+
+	globalStyle();
+
+	config = con;
+
+	// if an input was given merge it into the live record
+	if ( input.length() >= 5 ){
+		TFile * fin = new TFile( input.c_str() );
+		cd ( inDir );
+		fin->cd( inDir.c_str() );
+		loadRootDir( gDirectory, inDir );
+	}
+}
+
 // destructor
 histoBook::~histoBook(){
 
@@ -68,7 +110,7 @@ void histoBook::loadRootDir( TDirectory* tDir, string path ){
 	TKey* key;  
 	TObject* obj;   
 	
-	while ( key = (TKey*)next() ) {    
+	while ( (key = (TKey*)next()) ) {    
 		
 		obj = key->ReadObj() ;    
 		
@@ -140,6 +182,73 @@ string histoBook::cd( string sdir  ){
 	return old;
 }
 
+void histoBook::make( string nodeName ){
+	if ( config )
+		make( config, nodeName );
+}
+void histoBook::make( xmlConfig * config, string nodeName ){
+
+	if ( config && config->nodeExists( nodeName ) ){
+		
+		string hName = config->tagName( nodeName );
+		if ( "" == hName )
+			hName = nodeName;
+
+		// store the path in the config file
+		configPath[ hName ] = nodeName;
+
+		string type = config->getString( nodeName + ":type", "1D" );
+
+		
+		if ( "1D" == type ){
+			if ( config->nodeExists( nodeName + ".xBins" ) ){
+				
+				vector<double> xBins = config->getDoubleVector( nodeName + ".xBins" );
+				make1D( hName, config->getString( nodeName + ":title", hName ), 
+					xBins.size() - 1, xBins.data() );
+
+			} else if ( config->nodeExists( nodeName + ":xBins" ) ) {
+
+				vector<double> xBins = config->getDoubleVector( config->getString( nodeName + ":xBins" ) );
+				make1D( hName, config->getString( nodeName + ":title", hName ), 
+					xBins.size() - 1, xBins.data() );
+
+			} else {	
+			make1D( hName, config->getString( nodeName + ":title", hName ), 
+					config->getInt( nodeName + ":nBinsX", 1 ), config->getDouble( nodeName + ":x1", 0 ),
+					config->getDouble( nodeName + ":x2", 1 ) );
+			}
+
+		} else if ( "2D" == type ){
+			make2D( hName, config->getString( nodeName + ":title", hName ), 
+					config->getInt( nodeName + ":nBinsX", 1 ), config->getDouble( nodeName + ":x1", 0 ),
+					config->getDouble( nodeName + ":x2", 1 ),
+					config->getInt( nodeName + ":nBinsY", 1 ), config->getDouble( nodeName + ":y1", 0 ),
+					config->getDouble( nodeName + ":y2", 1 ) );
+		}
+
+
+	
+	}
+
+}
+void histoBook::makeAll( xmlConfig * con, string nodeName ){
+	
+	if ( !con )
+		return;
+	vector<string> paths = con->childrenOf( nodeName );
+
+	for ( int i=0; i < paths.size(); i++ ){
+		make( paths[ i ] );
+	}
+}
+void histoBook::makeAll( string nodeName ){
+	if ( !config )
+		return;
+
+	makeAll( config, nodeName );
+}
+
 void histoBook::make1F( string name, string title, uint nBins, double low, double hi  ){
 
 	TH1F* h;
@@ -192,12 +301,25 @@ TH2* histoBook::get2D( string name, string sdir  ){
 		sdir = currentDir;
 	return (TH2*)book[ ( sdir  + name  ) ];
 }
+TH3* histoBook::get3D( string name, string sdir ){
+	return (( TH3* ) get( name, sdir ));
+}
 
 void histoBook::fill( string name, double bin, double weight ){ 
 	if ( get( name ) != 0)
 		get( name )->Fill( bin, weight );
 }
 
+
+histoBook* histoBook::exportAs( string filename ) {
+
+	string outName = styling + ".png";
+	if ( "" != filename )
+		outName = filename;
+	gPad->SaveAs( outName.c_str() );
+	return this;
+
+}
 
 void histoBook::globalStyle(){
 
@@ -230,56 +352,119 @@ void histoBook::globalStyle(){
 
 histoBook* histoBook::style( string histName ){
 	styling = histName;
+
+	// set the default style if it is there
+	if ( config && config->nodeExists( configPath[ histName ] + ".style" ) ){
+		set( configPath[histName] + ".style" );
+	} else if ( config && config->nodeExists( configPath[ histName ] + ":style" ) && config->nodeExists( config->getString( configPath[ histName ] + ":style" ) ) ){
+		set( config->getString( configPath[ histName ] + ":style" ) );
+		cout << "hello " << endl;
+	}
+
 	return this;
 }
 
 histoBook* histoBook::set( string param, string p1, string p2, string p3, string p4 ){
 	
-	// force the param name to lowercase
-	transform(param.begin(), param.end(), param.begin(), ::tolower);
-
-    TH1* h = get( styling );
-    if ( h ){
-
-	    if ( "title" == param ){
-	    	h->SetTitle( p1.c_str() );
-	    } else if ( "x" == param ){
-	    	h->GetXaxis()->SetTitle( p1.c_str() );
-	    } else if ( "y" == param ){
-	    	h->GetYaxis()->SetTitle( p1.c_str() );
-	    } else if ( "legend" == param ){
-	    	if ( p2 == "")
-	    		p2="lpf";
-	    	legend->AddEntry( h, p1.c_str(), p2.c_str() );
-			legend->Draw();
-	    } else if ( "draw" == param ){
-	    	drawOption = p1;
-	    }
-	}
+	vector<string> l;
+	l.push_back( p1 );
+	l.push_back( p2 );
+	l.push_back( p3 );
+	l.push_back( p4 );
+	set( param, l );
 
 	return this;
 }
 
 histoBook* histoBook::set( string param, double p1, double p2, double p3, double p4  ){
 
+	vector<string> list;
+	stringstream sstr;
+	sstr.str("");
+	sstr << p1;
+	list.push_back( sstr.str() );
 
-	transform(param.begin(), param.end(), param.begin(), ::tolower);
+	sstr.str("");
+	sstr << p2;
+	list.push_back( sstr.str() );
+
+	sstr.str("");
+	sstr << p3;
+	list.push_back( sstr.str() );
+
+	sstr.str("");
+	sstr << p4;
+	list.push_back( sstr.str() );
+
+	set( param, list );
+    
+	return this;
+}
+
+histoBook* histoBook::set( xmlConfig* config, string nodePath ){
+
+	// get the list of attributes and set the style from that
+	vector< pair< string, string > > list = config->getAttributes( nodePath );
+
+	for ( int i = 0; i < list.size(); i++ ){
+
+		vector<string> params = config->split( list[ i ].second, ',' );
+		for ( int p = 0; p < params.size(); p++ ){
+			params[ p ] = config->trim(params[ p ]);
+		}
+		
+
+		set( list[ i ].first, params );
+
+	}
+
+	return this;
+}
+histoBook* histoBook::set( string opt, vector<string> params ){
+
+	//cout  << "Setting : " << opt << endl;
+	//for ( int i = 0; i < params.size(); i++ ){
+	//	cout << params[ i ] << " ";
+	//}
+	//cout << endl;
+	// force the param name to lowercase
+	transform(opt.begin(), opt.end(), opt.begin(), ::tolower);
 
     TH1* h = get( styling );
     if ( h ){
 
-	    if ( "linecolor" == param ){
-
-	    	h->SetLineColor( (int) p1 );
-	    } else if ( "domain" == param ){
-	    	double min = p1;
-	    	double max = p2;
+	    if ( "title" == opt ){
+	    	h->SetTitle( cParam(params, 0) );
+	    } else if ( "x" == opt ){
+	    	h->GetXaxis()->SetTitle( cParam(params, 0) );
+	    } else if ( "y" == opt ){
+	    	h->GetYaxis()->SetTitle( cParam(params, 0) );
+	    } else if ( "legend" == opt ){
+	    	legend->AddEntry( h, cParam(params, 0), cParam(params, 1, "lpf") );
+			legend->Draw();
+	    } else if ( "draw" == opt ){
+	    	drawOption = cParam(params, 0);
+	    } else if ( "linecolor" == opt ){
+	    	int c = color( cParam( params, 0) );
+	    	if ( c  < 0 )
+	    		c = (int) dParam( params, 0);
+	    	h->SetLineColor( c );
+	    } else if ( "fillcolor" == opt ){
+	    	int c = color( cParam( params, 0) );
+	    	if ( c  < 0 )
+	    		c = (int) dParam( params, 0);
+	    	h->SetFillColor( c );
+	    } else if ( "linewidth" == opt ){
+	    	h->SetLineWidth( dParam( params, 0) );
+	    } else if ( "domain" == opt ){
+	    	double min = dParam( params, 0);
+	    	double max = dParam( params, 1);
 		    h->GetXaxis()->SetRangeUser( min, max );
-	    } else if ( "dynamicdomain" == param ){
-	    	double thresh = p1;
-	    	int min = (int)p2;
-	    	int max = (int)p3;
-	    	int axis = (int)p4;		// 1 = x, 2 = y
+	    } else if ( "dynamicdomain" == opt ){
+	    	double thresh = dParam( params, 0);
+	    	int min = (int)dParam( params, 1);
+	    	int max = (int)dParam( params, 2);
+	    	int axis = (int)dParam( params, 3);		// 1 = x, 2 = y
 
 	    	if ( 1 != axis && 2 != axis )
 	    		axis = 1;
@@ -296,33 +481,41 @@ histoBook* histoBook::set( string param, double p1, double p2, double p3, double
 		  	else if ( 2 == axis )
 		  		h->GetYaxis()->SetRange( min, max );
 
-	    }  else if ( "range" == param ){
+	    }  else if ( "range" == opt ){
 
-	    	double min = p1;
-	    	double max = p2;
+	    	double min = dParam( params, 0);
+	    	double max = dParam( params, 1);
 	    	
 	    	h->GetYaxis()->SetRangeUser( min, max );
-	    } else if ( "markercolor" == param ) {
-	    	h->SetMarkerColor( (int)p1 );
-	    } else if ( "markerstyle" == param ) {
-	    	h->SetMarkerStyle( (int)p1 );
-	    } else if ( "legend" == param ){
+	    } else if ( "markercolor" == opt ) {
+	    	int c = color( cParam( params, 0) );
+	    	if ( c  < 0 )
+	    		c = (int) dParam( params, 0);
+	    	h->SetMarkerColor( c );
+	    } else if ( "markerstyle" == opt ) {
+	    	h->SetMarkerStyle( (int)dParam( params, 0) );
+	    } else if ( "legend" == opt ){
 	    	// p1 - alignmentX
 	    	// p2 - alignmentY
 	    	// p3 - width
 	    	// p4 - height
 
 	    	// make sure option is valid
+	    	double p1 = dParam( params, 0);
+	    	double p2 = dParam( params, 1);
 	    	if ( !(legendAlignment::center == p1 || legendAlignment::left == p1 || legendAlignment::right == p1) )
 	    		p1 = legendAlignment::best;
 	    	if ( !(legendAlignment::center == p2 || legendAlignment::top == p2 || legendAlignment::bottom == p2) )
 	    		p2 = legendAlignment::best;
-	    	placeLegend( p1, p2, p3, p4 );
-	    } else if ( "numberofticks" == param ){
+	    	placeLegend( p1, p2, dParam( params, 3), dParam( params, 3) );
+	    } else if ( "numberofticks" == opt ){
 	    	// p1 - # of primary divisions
 	    	// p2 - # of secondary divisions
 	    	// p3 - axis : 0 or 1 = x, 2 = y
-	    	
+	    	double p1 = dParam( params, 0);
+	    	double p2 = dParam( params, 1);
+	    	double p3 = dParam( params, 2);
+
 	    	if ( p2 == -1 )
 	    		p2 = 0;
 
@@ -330,16 +523,30 @@ histoBook* histoBook::set( string param, double p1, double p2, double p3, double
 		    	h->GetYaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
 		    else 
 		    	h->GetXaxis()->SetNdivisions( (int) p1, (int) p2, 0, true );
+	    } else if ( "logy" == opt ){
+	    	gPad->SetLogy( (int)dParam( params, 0 ) );
+	    } else if ( "logx" == opt ){
+	    	gPad->SetLogx( (int)dParam( params, 0 ) );
+	    } else if ( "logz" == opt ){
+	    	gPad->SetLogz( (int)dParam( params, 0 ) );
 	    }
 
-    }
-    
-    
-    
 
+
+
+	}
 
 	return this;
+
+
+
 }
+histoBook * histoBook::set( string nodeName ){
+	if ( config )
+		set( config, nodeName );
+	return this;
+}
+
 
 
 histoBook* histoBook::draw(string name, Option_t* opt ){
