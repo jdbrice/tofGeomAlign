@@ -48,6 +48,8 @@ int main( int argc, char* argv[] ) {
 
         cout << "bins.p" << config.getString( "bins.p" ) << endl;
 
+        config.getDoubleVector( "textText" );
+
         book->makeAll( "h" );
 
         cout << " red is : " << book->color( "green" ) << endl;

@@ -32,6 +32,10 @@
 	</dan>
 
 	<test>wrwerw</test>
+	<textText>
+		<vvv></vvv>
+		<turtle></turtle>
+	</textText>
 
 	<style>
 		<s1 draw="colz" logY="1" range="0, 6" domain="0, 100" />
