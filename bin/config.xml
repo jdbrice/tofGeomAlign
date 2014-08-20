@@ -10,9 +10,9 @@
 	<geometryOutput>geometryAlignment.dat</geometryOutput>
 	
 	<!-- The directory containing the picoDsts -->
-	<dataDir>/star/institutions/rice/jdb/run13/pp510/tofCalibrationRun13/MuDstOutput/idealGeometry/output/</dataDir>
+	<dataDir>/star/institutions/rice/jdb/run13/pp510/runB/alignment/pass0/output/</dataDir>
 	<!-- number of files to process -->
-	<maxFiles> 50 </maxFiles>
+	<maxFiles> 500 </maxFiles>
 
 	<!-- cuts to apply -->
 	<ptCut>0.5</ptCut>

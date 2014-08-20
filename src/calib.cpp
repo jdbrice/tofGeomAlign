@@ -294,6 +294,8 @@ void calib::fitY() {
 			// perform the fit to the data
 			
 			yLocal->Fit( "fit", "QRN" );
+			yLocal->Fit( "fit", "QRN" );
+			yLocal->Fit( "fit", "QRN" );
 
 			fitParam = (fit->GetParameters());
 			fitError = (fit->GetParErrors());
@@ -381,7 +383,7 @@ void calib::fitXAndZ() {
 
 	// loop through the angle sections
 	for ( int j = 0; j < constants::nSections; j++ ){ 
-
+		
 		// loop trhough the trays
 		for ( int k = 1; k <= constants::nTrays; k++ ){
 			t[ k ] = k;
@@ -410,6 +412,10 @@ void calib::fitXAndZ() {
 			if ( entries >= config.getAsInt( "fitZMinHits", 10) ){
 
 				// perform the fit to the data
+				zLocal->Fit( "fit", "QRN" );
+				zLocal->Fit( "fit", "QRN" );
+				zLocal->Fit( "fit", "QRN" );
+				zLocal->Fit( "fit", "QRN" );
 				zLocal->Fit( "fit", "QRN" );
 
 				fitParam = (fit->GetParameters());
@@ -474,9 +480,13 @@ void calib::fitXAndZ() {
 	    zTray->SetMarkerStyle( 24 );
    		zTray->SetMarkerSize( 0.5 );
    		zTray->SetLineWidth( 2 );
-	    zTray->Draw( "p" );
+	    zTray->Draw( "pe" );
 
 	    angleFit->SetParameters( -0.5, 0.0 );
+    	zTray->Fit("angleFit","QRN");
+    	zTray->Fit("angleFit","QRN");
+    	zTray->Fit("angleFit","QRN");
+    	zTray->Fit("angleFit","QRN");
     	zTray->Fit("angleFit","QRN");
     	angleFit->Draw( "same" );
 
@@ -548,4 +558,20 @@ Double_t calib::fitFunction(Double_t *x, Double_t *par){
 
 Double_t calib::fitAngle(Double_t *x, Double_t *par){
   	return par[0]*TMath::Sin( x[0] * (TMath::Pi() / 180.0)) + par[1];
+}
+
+
+void calib::writeAlignment( ){
+
+	ifstream in( config.getAsString( "alignmentIn" ).c_str() );
+	ofstream out( config.getAsString( "alignmentOut" ).c_str() );
+
+	if ( in.is_open() ) {
+
+		cout << "hey " << endl;
+
+	}
+
+
+
 }

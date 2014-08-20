@@ -22,7 +22,7 @@ int main( int argc, char* argv[] ) {
        	return 0;
 
     } 
-    gErrorIgnoreLevel=kError + 1000;
+    gErrorIgnoreLevel=kSysError;
 
     /* Give a summary of config file */
     xmlConfig config( argv[ 1 ] );
@@ -60,14 +60,13 @@ int main( int argc, char* argv[] ) {
     // create a calibration object
     calib tofCalib( chain, config );
  
-    if ( jobType == (string)"calibrate" ){
+    if ( jobType == (string)"extractPos" ){
+        tofCalib.localPosition();        
+    } else if ( "calibrate" == jobType ){
 
-        
-        tofCalib.localPosition();
         tofCalib.fitY();
         tofCalib.fitXAndZ();
-        tofCalib.writeAlignment();
-        
+        //tofCalib.writeAlignment();
     }
 
 	return 0;
