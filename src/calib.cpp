@@ -20,29 +20,34 @@ using namespace jdbUtils;
 *	xmlConfig:	The xml configuration defining calib values 
 *				See repo Readme for a sample configuration.	
 ***********************************************************/
-calib::calib( TChain* chain, xmlConfig con )  {
+calib::calib( TChain* chain, xmlConfig *con )  {
 	cout << "[calib.calib] " << endl;
 	
 	config = con;
 
 	// create the histogram book
-	book = new histoBook( ( config.getAsString( "baseName" ) + config.getAsString( "rootOutput" ) ) );
+	cout << "[calib.calib] Creating book" << endl;
+	book = new histoBook( ( config->getString( "output.baseName" ) + config->getString( "output.root" ) ) );
 
 	_chain = chain;
+	cout << "[calib.calib] Creating Pico DST" << endl;
 	pico = new TOFrPicoDst( _chain );
 
 	gStyle->SetOptStat( 0 );
 
 	nSections = constants::nSections;
 
-	gErrorIgnoreLevel=kError;
+	gErrorIgnoreLevel=kSysError;
 	
-	reportX = new reporter( config.getAsString( "baseName" ) + "x" + config.getAsString( "reportOutput" ) );
-	reportY = new reporter( config.getAsString( "baseName" ) + "y" + config.getAsString( "reportOutput" ) );
+	cout << "[calib.calib] Creating Reports" << endl;
+	reportX = new reporter( config->getString( "output.baseName" ) + "x" + config->getString( "output.report" ) );
+	reportY = new reporter( config->getString( "output.baseName" ) + "y" + config->getString( "output.report" ) );
 
+	cout << "[calib.calib] Creating Module Space Map" << endl;
 	// get the module start locations
-	std::vector<double> tmp = config.getAsDoubleVector( "moduleStart" );
-	if ( tmp.size() >= 1 && tmp[ 0 ] != config.getAsString( "moduleStart" ) )
+	std::vector<double> tmp = config->getDoubleVector( "moduleStart" );
+
+	if ( tmp.size() >= 1 && tmp[ 0 ] != config->getString( "moduleStart" ) )
 		moduleStart = tmp;
 	else {
 	
@@ -84,9 +89,9 @@ void calib::localPosition() {
 	cout << "[calib." << __FUNCTION__ << "] Start " << endl;
 	startTimer();
 
-	int minHitsFit = config.getAsInt( "minHitsFit", 25);
-	double ptCut = config.getAsDouble( "ptCut", 0.5 );
-	double vzCut = config.getAsDouble( "vzCut", 30.0);
+	int minHitsFit = config->getInt( "minHitsFit", 25);
+	double ptCut = config->getDouble( "ptCut", 0.5 );
+	double vzCut = config->getDouble( "vzCut", 30.0);
 
 
 	if ( !_chain ){
@@ -102,7 +107,7 @@ void calib::localPosition() {
 	// Make the Histograms for storing local hit position
 	book->cd( "localPosition" );
 
-	int nBins = config.getAsInt( "numBins", 100 );
+	int nBins = config->getInt( "numBins", 100 );
 	for ( int j = 0; j < nSections; j++ ){
 
 		book->make2D( "yLocal" + ts( j ), "Y Local Position; tray; yLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBins, -5.0, 5.0 );
@@ -189,43 +194,9 @@ void calib::localPosition() {
 			book->fill( "yLocalAll" , tray - 1, yLocal );
 			book->fill( "zLocalAll" , tray - 1, zLocal );
 
-
-
 		}
 
 	}
-
-
-	// Now draw everything to the report file
-/*
-	for ( int j = 0; j < nSections; j++ ){
-		canvas->Clear();
-		canvas->Divide( 2, 2);
-
-		canvas->cd( 1 );
-		book->draw( "yLocal" + ts( j ), "colz", false );
-
-		canvas->cd( 2 );
-		book->draw( "zLocal" + ts( j ), "colz", false );
-
-		canvas->cd( 3 );
-		book->draw( "yLocalPhi" + ts( j ), "colz", false );
-
-		canvas->cd( 4 );
-		book->draw( "zLocalPhi" + ts( j ), "colz", false );
-		savePage();
-	}
-*/
-	
-	reportY->newPage( );
-	book->draw( "yLocalAll", "colz" );
-	reportY->savePage();
-
-
-	reportX->newPage( );
-	book->draw( "zLocalAll", "colz" );
-	reportX->savePage();
-
 
 	cout << "[calib." << __FUNCTION__ << "] completed in " << elapsed() << " seconds " << endl;
 	
@@ -238,6 +209,10 @@ void calib::localPosition() {
 *	over all offset for each tray.
 ***********************************************************/
 void calib::fitY() {
+
+	reportY->newPage( );
+	book->draw( "yLocalAll", "colz" );
+	reportY->savePage();
 
 	startTimer();
 	cout << "[calib." << __FUNCTION__ << "] Started"  << endl;
@@ -289,7 +264,7 @@ void calib::fitY() {
 		// total entries in tray
 		double entries = yLocal->Integral( );
 
-		if ( entries >= config.getAsInt( "fitYMinHits", 10) ){
+		if ( entries >= config->getInt( "fitYMinHits", 10) ){
 
 			// perform the fit to the data
 			
@@ -362,6 +337,10 @@ void calib::fitY() {
 ***********************************************************/
 void calib::fitXAndZ() {
 
+	reportX->newPage( );
+	book->draw( "zLocalAll", "colz" );
+	reportX->savePage();
+
 	startTimer();
 	cout << "[calib." << __FUNCTION__ << "] Started"  << endl;
 
@@ -409,7 +388,7 @@ void calib::fitXAndZ() {
 			// total entries in tray
 			double entries = zLocal->Integral( );
 
-			if ( entries >= config.getAsInt( "fitZMinHits", 10) ){
+			if ( entries >= config->getInt( "fitZMinHits", 10) ){
 
 				// perform the fit to the data
 				zLocal->Fit( "fit", "QRN" );
@@ -563,8 +542,8 @@ Double_t calib::fitAngle(Double_t *x, Double_t *par){
 
 void calib::writeAlignment( ){
 
-	ifstream in( config.getAsString( "alignmentIn" ).c_str() );
-	ofstream out( config.getAsString( "alignmentOut" ).c_str() );
+	ifstream in( config->getString( "alignmentIn" ).c_str() );
+	ofstream out( config->getString( "alignmentOut" ).c_str() );
 
 	if ( in.is_open() ) {
 

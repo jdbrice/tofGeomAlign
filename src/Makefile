@@ -1,10 +1,10 @@
 
 # project name and executable name
-project = app
+project = align
 # source suffix
 source = .cpp 
 # object files to make
-objects = app.o histoBook.o chainLoader.o analyzer.o reporter.o utils.o
+objects = histoBook.o chainLoader.o analyzer.o reporter.o utils.o calib.o align.o TOFrPicoDst.o
 
 sources = $(wildcard *.cpp)
 headers = $(wildcard ../include/*.h)
@@ -41,11 +41,3 @@ clean:
 full:
 	clean
 	$(project)
-
-#doc:
-#	@echo "Generating documentation..." 	\					
-#	cldoc generate $(CXXFLAGS) --			\
-#		--report 							\
-#		--merge docs 						\
-#		--output html 						\
-#		$(sources) $(headers)

@@ -38,7 +38,7 @@ private:
 	clock_t startTime;
 
 	// config file
-	xmlConfig config;
+	xmlConfig *config;
 
 	int nSections;
 	std::vector<double> moduleStart;
@@ -59,7 +59,7 @@ private:
 public:
 
 	// Constructor
-	calib( TChain * chain, xmlConfig config );
+	calib( TChain * chain, xmlConfig *config );
 
 	// destructor
 	~calib();
