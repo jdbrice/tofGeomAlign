@@ -1,0 +1,23 @@
+<config>
+
+	<!-- perform the geometry alignment -->
+	<jobType>histogram</jobType>
+
+	<input>
+		<dataDir maxFiles="2500">/star/institutions/rice/jdb/run13/pp510/runB/alignment/pass5/output/</dataDir>
+		<geometry></geometry>	
+	</input>
+	<output>
+		<baseName>pass5/</baseName>
+		<root>qa</root>
+		<report>qa.pdf</report>
+		<geometry></geometry>
+	</output>
+	
+	<!-- cuts to apply -->
+	<ptCut>0.5</ptCut>
+	<vzCut>30.0</vzCut>
+	<minHitsFit>25</minHitsFit>
+	<fitZMinHits>10</fitZMinHits>
+
+</config>

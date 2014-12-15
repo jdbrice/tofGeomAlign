@@ -1,0 +1,26 @@
+<config>
+
+	<!-- perform the geometry alignment -->
+	<jobType>calibrate</jobType>
+
+	<input>
+		<root>pass4/qa.root</root>
+		<geometry>pass3/geometry.txt</geometry>	
+	</input>
+
+	<output>
+		<baseName>pass4/</baseName>
+		<root>qaFit</root>
+		<report>qa.pdf</report>
+		<geometry>geometry.txt</geometry>
+	</output>
+	
+	<!-- cuts to apply -->
+	<ptCut>0.5</ptCut>
+	<vzCut>30.0</vzCut>
+	<minHitsFit>25</minHitsFit>
+	<fitZMinHits>10</fitZMinHits>
+	<rebinY>1</rebinY>
+	<rebinZ>1</rebinZ>
+
+</config>
