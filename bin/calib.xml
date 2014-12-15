@@ -4,12 +4,12 @@
 	<jobType>calibrate</jobType>
 
 	<input>
-		<root>pass4/qa.root</root>
-		<geometry>pass3/geometry.txt</geometry>	
+		<root>pass0/qa.root</root>
+		<geometry></geometry>	
 	</input>
 
 	<output>
-		<baseName>pass4/</baseName>
+		<baseName>pass0/</baseName>
 		<root>qaFit</root>
 		<report>qa.pdf</report>
 		<geometry>geometry.txt</geometry>
@@ -20,6 +20,9 @@
 	<vzCut>30.0</vzCut>
 	<minHitsFit>25</minHitsFit>
 	<fitZMinHits>10</fitZMinHits>
+
+	<!-- Rebinning on the histos - can help with low statistics but be careful
+		This can cause the alignment to be off -->
 	<rebinY>1</rebinY>
 	<rebinZ>1</rebinZ>
 
