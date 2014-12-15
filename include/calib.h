@@ -84,6 +84,7 @@ protected:
 
 
 	static Double_t fitFunction( Double_t *x, Double_t *par );
+	static Double_t fitFunctionZ( Double_t *x, Double_t *par );
 	static Double_t fitAngle( Double_t *x, Double_t *par );
 };
 

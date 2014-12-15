@@ -34,28 +34,28 @@ int main( int argc, char* argv[] ) {
     /*   Load the files into the chain */
     TChain * chain = new TChain( "tof" );
     
-    if ( config.nodeExists( "input.dataDir" ) ){
-        chainLoader::load( chain, (char*)config.getString( "input.dataDir" ).c_str(), config.getInt( "input.dataDir:maxFiles", 10000 ) );
-    } else {
-        cout << " No Data Directory given please specify input.dataDir node in your config file" << endl;
-        return 0;
-    }
-    
-
     // create a calibration object
     calib tofCalib( chain, &config );
-    cout << "jobType : " << jobType << endl;
+    
+
     if ( "histogram" == jobType ){
+
+        if ( config.nodeExists( "input.dataDir" ) ){
+            chainLoader::load( chain, (char*)config.getString( "input.dataDir" ).c_str(), config.getInt( "input.dataDir:maxFiles", 10000 ) );
+        } else {
+            cout << " No Data Directory given please specify input.dataDir node in your config file" << endl;
+            return 0;
+        }
         
-        cout << endl << endl << "Extracting position histograms" << endl;
+        cout << endl << "Extracting position histograms" << endl << endl;
         tofCalib.localPosition();        
 
     } else if ( "calibrate" == jobType ){
 
-        cout << endl << endl << "Beginning Calibration" << endl << endl;
+        cout << endl << "Beginning Calibration" << endl << endl;
         tofCalib.fitY();
         tofCalib.fitXAndZ();
-        //tofCalib.writeAlignment();
+        tofCalib.writeAlignment();
     }
 
 	return 0;

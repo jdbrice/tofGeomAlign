@@ -27,7 +27,8 @@ calib::calib( TChain* chain, xmlConfig *con )  {
 
 	// create the histogram book
 	cout << "[calib.calib] Creating book" << endl;
-	book = new histoBook( ( config->getString( "output.baseName" ) + config->getString( "output.root" ) ) );
+	book = new histoBook( ( config->getString( "output.baseName" ) + config->getString( "output.root" ) ), 
+							config->getString( "input.root" ) );
 
 	_chain = chain;
 	cout << "[calib.calib] Creating Pico DST" << endl;
@@ -108,10 +109,11 @@ void calib::localPosition() {
 	book->cd( "localPosition" );
 
 	int nBins = config->getInt( "numBins", 100 );
+	int nBinsZ = config->getInt( "numBinsZ", 200 );
 	for ( int j = 0; j < nSections; j++ ){
 
 		book->make2D( "yLocal" + ts( j ), "Y Local Position; tray; yLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBins, -5.0, 5.0 );
-		book->make2D( "zLocal" + ts( j ), "Z Local Position; tray; zLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBins, -5.0, 5.0 );
+		book->make2D( "zLocal" + ts( j ), "Z Local Position; tray; zLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBinsZ, -10.0, 10.0 );
 
 		book->make2D( "yLocalPhi" + ts( j ), "Y Local Position; #phi [deg]; yLocal [cm]", constants::nTrays, -3.0, 717.0, nBins, -5.0, 5.0 );
 		book->make2D( "zLocalPhi" + ts( j ), "Z Local Position; #phi [deg]; zLocal [cm]", constants::nTrays, -3.0, 717.0, nBins, -5.0, 5.0 );
@@ -119,7 +121,7 @@ void calib::localPosition() {
 	}
 
 	book->make2D( "yLocalAll", "Y Local Position All Modules; tray; yLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBins, -5.0, 5.0 );
-	book->make2D( "zLocalAll", "Z Local Position All Modules; tray; zLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBins, -5.0, 5.0 );
+	book->make2D( "zLocalAll", "Z Local Position All Modules; tray; zLocal [cm]", constants::nTrays, 0.0 ,constants::nTrays, nBinsZ, -10.0, 10.0 );
 	book->make2D( "yLocalPhiAll", "Y Local Position All; #phi [deg]; yLocal", constants::nTrays, -3.0, 717.0, nBins, -5.0, 5.0 );
 	book->make2D( "zLocalPhiAll", "Z Local Position All; #phi [deg]; yLocal", constants::nTrays, -3.0, 717.0, nBins, -5.0, 5.0 );
 
@@ -210,12 +212,15 @@ void calib::localPosition() {
 ***********************************************************/
 void calib::fitY() {
 
-	reportY->newPage( );
-	book->draw( "yLocalAll", "colz" );
-	reportY->savePage();
 
 	startTimer();
 	cout << "[calib." << __FUNCTION__ << "] Started"  << endl;
+
+	reportY->newPage( );
+	book->cd( "localPosition" );
+	book->draw( "yLocalAll", "colz" );
+	reportY->savePage();
+
 
 	book->cd( "fitY" );
 	book->make1D( "intercept", "Fit Intercept ", 	500, 0, 5);
@@ -223,8 +228,8 @@ void calib::fitY() {
 
 	TH2D* rebinYLocalAll = (TH2D*)book->get( "yLocalAll", "localPosition")->Clone( "rebinYLocalAll" );
 
-	int rebin = 5;
-	//rebinYLocalAll->RebinY( rebin );
+	int rebin = config->getInt( "rebinY", 1 );
+	rebinYLocalAll->RebinY( rebin );
 
 
 	// the tray value for plotting
@@ -337,18 +342,21 @@ void calib::fitY() {
 ***********************************************************/
 void calib::fitXAndZ() {
 
-	reportX->newPage( );
-	book->draw( "zLocalAll", "colz" );
-	reportX->savePage();
+	
 
 	startTimer();
 	cout << "[calib." << __FUNCTION__ << "] Started"  << endl;
+
+	reportX->newPage( );
+	book->cd( "localPosition" );
+	book->draw( "zLocalAll", "colz" );
+	reportX->savePage();
 
 	book->cd( "fitXAndZ" );
 	book->make1D( "intercept", "Fit Intercept ", 	500, 0, 5);
 	book->make1D( "divider", "Fit Divider", 		500, 0, 1);
 
-	int rebin = 5;
+	int rebin = config->getInt( "rebinZ", 1);
 
 	
 	double z0[ constants::nTrays ][ constants::nSections ];
@@ -360,9 +368,13 @@ void calib::fitXAndZ() {
 
 	reportX->newPage( 4, 5 );
 
+
 	// loop through the angle sections
 	for ( int j = 0; j < constants::nSections; j++ ){ 
 		
+		TH2* zRebin = book->get2D( "zLocal" + ts( j ), "localPosition" );
+		zRebin->RebinY( rebin );
+
 		// loop trhough the trays
 		for ( int k = 1; k <= constants::nTrays; k++ ){
 			t[ k ] = k;
@@ -372,18 +384,26 @@ void calib::fitXAndZ() {
 
 			progressBar( k + (j * constants::nTrays), constants::nTrays*constants::nSections, 50);
 
-			TH1D* zLocal = ((TH2D*)book->get( "zLocal" + ts( j ), "localPosition"  ))->ProjectionY( ("trayMod" + ts(j) + "Tray" + ts( k )).c_str(), k, k);
+			
+			//TH1D* zLocal = ((TH2D*)book->get( "zLocal" + ts( j ), "localPosition"  ))->ProjectionY( ("trayMod" + ts(j) + "Tray" + ts( k )).c_str(), k, k);
+			TH1D* zLocal = zRebin->ProjectionY( ("trayMod" + ts(j) + "Tray" + ts( k )).c_str(), k, k);
+			
+
 			book->add( "trayMod" + ts(j) + "Tray" + ts( k ), zLocal );
 
 	
 			double* fitParam, *fitError;
 
 			// create the fit function
-			TF1 *fit = new TF1("fit", calib::fitFunction, -6.0, 6.0, 5);
+			TF1 *fit = new TF1("fit", calib::fitFunctionZ, -10.0, 10.0, 4);
 			fit->SetLineWidth( 2 );
 			fit->SetLineColor( kRed );
 			// give the fit inital parameters to aid convergence
-			fit->SetParameters( 0, zLocal->GetBinContent( 50 ), 0.1, 0.1, 0.0 );
+			fit->SetParameters( 0, zLocal->GetBinContent( 50 ), 1.5, 0.05 );
+			//fit->SetParLimits( 1, 1, 10000 );
+			fit->SetParLimits( 2, 1.5, 3.0 );
+			fit->SetParLimits( 3, 0.01, .5 );
+
 			
 			// total entries in tray
 			double entries = zLocal->Integral( );
@@ -424,7 +444,7 @@ void calib::fitXAndZ() {
 			book->style( "trayMod" + ts(j) + "Tray" + ts( k ) )->set( "title", "Module " + ts( j ) + " Tray" + ts( k ) + " : z Local Fit" )->draw( );
 			fit->Draw("same");
 			
-			TLatex *tex = new TLatex(-3, fitParam[1]/3.0, ("Z0 = " + ts( fitParam[ 0 ] ) + " #pm " + ts( fitError[ 0 ] )).c_str()  );
+			TLatex *tex = new TLatex(-8, fitParam[1]/3.0, ("Z0 = " + ts( fitParam[ 0 ] ) + " #pm " + ts( fitError[ 0 ] )).c_str()  );
 			tex->SetTextSize(0.07);
       		tex->Draw("same");
 
@@ -530,9 +550,23 @@ void calib::fitXAndZ() {
 }
 
 
+
+/**
+ *	fit function for a gaussian platue signal peak
+ *	par[ 0 ] = x Offset
+ *	par[ 1 ] = scale ( height )
+ *  par[ 2 ] = platuea Width 
+ *  par[ 3 ] = sharpness
+ *  par[ 4 ] = y Offset
+ */
 Double_t calib::fitFunction(Double_t *x, Double_t *par){
 	Double_t y = ( TMath::Abs( x[0] - par[0] ) - par[2] ) / par[3];
   	return par[1] / ( 1.0 + TMath::Exp(y) ) + par[4];
+}
+
+Double_t calib::fitFunctionZ(Double_t *x, Double_t *par){
+	Double_t y = ( TMath::Abs( x[0] - par[0] ) - par[2] ) / par[3];
+  	return par[1] / ( 1.0 + TMath::Exp(y) );
 }
 
 Double_t calib::fitAngle(Double_t *x, Double_t *par){
@@ -542,15 +576,40 @@ Double_t calib::fitAngle(Double_t *x, Double_t *par){
 
 void calib::writeAlignment( ){
 
-	ifstream in( config->getString( "alignmentIn" ).c_str() );
-	ofstream out( config->getString( "alignmentOut" ).c_str() );
+	startTimer();
+	cout << "[calib." << __FUNCTION__ << "] Started"  << endl;
+
+	ifstream in( config->getString( "input.geometry" ).c_str() );
+	ofstream out( (config->getString( "output.baseName" ) + config->getString( "output.geometry" )).c_str() );
 
 	if ( in.is_open() ) {
+		for ( int iT = 0; iT < constants::nTrays; iT++ ){
 
-		cout << "hey " << endl;
+			double iy, iz, ix;
+			in >> iy >> iz >> ix;
 
+			double y = yPos[ iT ] + iy;
+			double x = xPos[ iT ] + ix;
+			double z = -angle0zOff[ iT ] + iz;
+			out << setw(15) << y << setw(15) << z << setw(15) << x << endl;
+
+		}
+
+		in.close();
+		out.close();
+	} else {
+
+		for ( int iT = 0; iT < constants::nTrays; iT++ ){
+
+			double y = yPos[ iT ];
+			double x = xPos[ iT ];
+			double z = -angle0zOff[ iT ];
+			out << setw(15) << y << setw(15) << z << setw(15) << x << endl;
+		}
+
+		out.close();
 	}
 
-
+	cout << "[calib." << __FUNCTION__ << "] completed in " << elapsed() << " seconds " << endl;
 
 }
