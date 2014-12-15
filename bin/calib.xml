@@ -4,12 +4,12 @@
 	<jobType>calibrate</jobType>
 
 	<input>
-		<root>pass0/qa.root</root>
-		<geometry></geometry>	
+		<root>pass1/qa.root</root>
+		<geometry>pass0/geometry.txt</geometry>	
 	</input>
 
 	<output>
-		<baseName>pass0/</baseName>
+		<baseName>pass1/</baseName>
 		<root>qaFit</root>
 		<report>qa.pdf</report>
 		<geometry>geometry.txt</geometry>

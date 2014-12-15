@@ -4,11 +4,11 @@
 	<jobType>histogram</jobType>
 
 	<input>
-		<dataDir maxFiles="100">/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass0/</dataDir>
+		<dataDir maxFiles="100">/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass1/</dataDir>
 		<geometry></geometry>	
 	</input>
 	<output>
-		<baseName>pass0/</baseName>
+		<baseName>pass1/</baseName>
 		<root>qa</root>
 		<report>qa.pdf</report>
 		<geometry></geometry>
