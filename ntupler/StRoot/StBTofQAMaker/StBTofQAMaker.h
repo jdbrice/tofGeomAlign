@@ -59,6 +59,9 @@ class StBTofQAMaker : public StMaker
 		TH2F *hPID;
 		TH2F *hVpdTimeRes;
 		TH1F *hStartTimeResRun;
+
+		TH2F *hBTofTimeResTrayWide;
+		TH2F *hBTofTimeResTrayNarrow;
 		TH2F *hBTofTimeResTray;
                 TH2F *hBTofTimeResMult;
                 TH2F *hYLocal;
@@ -66,6 +69,8 @@ class StBTofQAMaker : public StMaker
 		TH2F *hBTofTimeResT0;                		
 		TH2F *hBTofTimeResCell;
 		TH1F *hZVertex;
+		TH1F *hZVertexVPD;
+		TH1F *hZVertexDelta;
 
                 TH2F *hBTofTimeResTray30;
                 TH2F *hBTofTimeResMult30;

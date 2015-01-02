@@ -2,26 +2,26 @@
 <job maxFilesPerProcess="1" filesPerHour="20">
 	<command>
 		starver SL14i
-		root4star -b -q alignment.C\(\"detp\ geometry\ y2014a\",\"$FILELIST\",\"$JOBID.ntuple.root\",\"pass1_in.txt\"\) &gt;&amp; ${JOBID}.log
+		root4star -b -q alignment.C\(\"detp\ geometry\ y2014a\",\"$FILELIST\",\"$JOBID.ntuple.root\",\"geometry.txt\"\) &gt;&amp; ${JOBID}.log
 	</command>
 
-	<stdout URL="file:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass1/log/$JOBID.out" />
+	<stdout URL="file:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass3/log/$JOBID.out" />
 	
-	<stderr URL="file:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass1/log/$JOBID.err" />
+	<stderr URL="file:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass3/log/$JOBID.err" />
 	
-	<input URL="filelist:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/ntupler/tofPicoDst/sthlt_good.lis" nFiles="101" />
+	<input URL="filelist:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/ntupler/sthlt_good.lis" nFiles="75" />
 
-	    <output fromScratch="*" toURL="file:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass1/" />
+	    <output fromScratch="*" toURL="file:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass3/" />
 
 	<SandBox>
  		<Package>
  			<File>file:./alignment.C</File>
- 			<File>file:./geoms/pass1_in.txt</File> 
+ 			<File>file:./geometry.txt</File>
  			<File>file:./.sl64_gcc447/</File> 
  		</Package> 
  	</SandBox>
 
 	<Generator> 
- 		<Location>/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass1/gen</Location> 
+ 		<Location>/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/data/pass3/gen</Location> 
  	</Generator> 
 </job>
