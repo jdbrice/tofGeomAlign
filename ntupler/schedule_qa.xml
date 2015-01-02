@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job maxFilesPerProcess="1" filesPerHour="250">
+	<command>
+		starver SL14i
+		root4star -b -q qaMaker.C\(\"detp\ geometry\ y2014a\",\"$FILELIST\",\"$JOBID.ntuple.root\",\"db/geometry.txt\"\) &gt;&amp; ${JOBID}.log
+	</command>
+
+	<stdout URL="file:/star/u/jdb/finalTofCalibration/tofGeomAlign/ntupler/data/log/$JOBID.out" />
+	
+	<stderr URL="file:/star/u/jdb/finalTofCalibration/tofGeomAlign/ntupler/data/log/$JOBID.err" />
+	
+	<input URL="filelist:/star/institutions/rice/jdb/run14/auau15/finalTofCalibration/tofGeomAlign/ntupler/sthlt_good.lis" nFiles="250" />
+
+	    <output fromScratch="*" toURL="file:/star/u/jdb/finalTofCalibration/tofGeomAlign/ntupler/data/" />
+
+	<SandBox>
+ 		<Package>
+ 			<File>file:./inQA.C</File>
+ 			<File>file:./db/geometry.txt</File>
+ 			<File>file:./.sl64_gcc447/</File>
+ 			<File>file:./pass1_t0_4DB.dat</File> 
+ 		</Package> 
+ 	</SandBox>
+
+	<Generator> 
+ 		<Location>/star/u/jdb/finalTofCalibration/tofGeomAlign/ntupler/data/gen</Location> 
+ 	</Generator> 
+</job>
