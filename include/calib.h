@@ -54,7 +54,7 @@ private:
 	std::vector<double> angle0zOff, angle0zError;
 	std::vector<double> angle0FitOff, angle0FitError;
 
-	double moduleSpaceMap[ constants::nSections ];
+	static double moduleSpaceMap[ ];
 
 public:
 

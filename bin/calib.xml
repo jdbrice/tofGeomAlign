@@ -5,14 +5,14 @@
 
 	<input>
 		<root>pass3/qa.root</root>
-		<geometry>pass2/geometry.txt</geometry>	
+		<geometry>pass2/geometry.dat</geometry>
 	</input>
 
 	<output>
 		<baseName>pass3/</baseName>
 		<root>qaFit</root>
 		<report>qa.pdf</report>
-		<geometry>geometry.txt</geometry>
+		<geometry>geometry.dat</geometry>
 	</output>
 	
 	<!-- cuts to apply -->

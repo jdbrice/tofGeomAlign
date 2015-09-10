@@ -9,7 +9,7 @@
 // provides my own string shortcuts etc.
 using namespace jdbUtils;
 
-
+double calib::moduleSpaceMap[ ] = {0, 16, 20, 22, 26, 30, 32};
 
 /**********************************************************
 *	Constructor
@@ -63,7 +63,7 @@ calib::calib( TChain* chain, xmlConfig *con )  {
 	}
 
 	// doesnt change ever, unless they rebuild tof detector
-	moduleSpaceMap = {0, 16, 20, 22, 26, 30, 32};
+	
 
 }
 
