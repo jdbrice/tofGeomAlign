@@ -8,7 +8,7 @@ void chainLoader::load(
 						const char* ntdir, 	// the directory in which to look for ntuples
 						uint maxFiles 
 						) {
-	//cout << " [chainLoader] searching " << ntdir << " for ntuples" << endl;
+	cout << " [chainLoader] searching " << ntdir << " for ntuples" << endl;
 
 	if (maxFiles == 0)
 		maxFiles = 1000;

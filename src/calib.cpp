@@ -518,7 +518,7 @@ void calib::fitXAndZ() {
 	frame->SetMinimum( -3 );
 	frame->SetMaximum( 1 );
 	frame->GetXaxis()->SetTitle("Tray #");
-	frame->GetYaxis()->SetTitle("zLocal Offset");
+	frame->GetYaxis()->SetTitle("zLocal Offset [cm]");
 	frame->Draw();
 
 	// Plot the z Offset

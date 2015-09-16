@@ -4,11 +4,11 @@
 	<jobType>histogram</jobType>
 
 	<input>
-		<dataDir maxFiles="1250">/Users/danielbrandenburg/bnl/local/data/Run12/cuau/geom/pass3/</dataDir>
+		<dataDir maxFiles="50">/star/institutions/rice/jdb/calib/data/ntuples/</dataDir>
 		<geometry></geometry>	
 	</input>
 	<output>
-		<baseName>pass3/</baseName>
+		<baseName>pass0/</baseName>
 		<root>qa</root>
 		<report>hqa.pdf</report>
 		<geometry></geometry>
